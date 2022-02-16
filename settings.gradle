@@ -1,0 +1,16 @@
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+        jcenter() // Warning: this repository is going to shut down soon
+    }
+}
+rootProject.name = "OpenScanner"
+include ':app'
+include ':core'
+include ':engine-zxing'
+include ':engine-zbar'
+include ':engine-hwscankit'
+include ':engine-wechat'
+include ':ui'
