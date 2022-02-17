@@ -30,4 +30,5 @@ android {
 }
 
 dependencies {
+    implementation "com.google.zxing:zxing:3.4.1"
 }
