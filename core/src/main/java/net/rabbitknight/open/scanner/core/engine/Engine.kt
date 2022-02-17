@@ -15,24 +15,4 @@ interface Engine {
      * 设置检测的格式
      */
     fun setFormat(vararg format: BarcodeFormat)
-
-    /**
-     * 设置数据源
-     */
-    fun setSource(source: Source)
-
-    /**
-     * 获取结果
-     */
-    fun getResult(): BlockingQueue<ImageResult>
-
-    /**
-     * 开始检测
-     */
-    fun start()
-
-    /**
-     * 结束检测
-     */
-    fun stop()
 }
