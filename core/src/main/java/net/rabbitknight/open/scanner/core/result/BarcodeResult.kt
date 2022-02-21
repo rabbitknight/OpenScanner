@@ -10,3 +10,5 @@ data class BarcodeResult(
 )
 
 data class Rect(val left: Int, val top: Int, val right: Int, val bottom: Int)
+
+data class RectF(val left: Float, val top: Float, val right: Float, val bottom: Float)

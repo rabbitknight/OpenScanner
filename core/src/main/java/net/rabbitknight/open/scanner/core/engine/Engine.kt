@@ -1,9 +1,8 @@
 package net.rabbitknight.open.scanner.core.engine
 
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
+import net.rabbitknight.open.scanner.core.image.ImageProxy
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import net.rabbitknight.open.scanner.core.source.Source
-import java.util.concurrent.BlockingQueue
 
 interface Engine {
     /**
@@ -15,4 +14,9 @@ interface Engine {
      * 设置检测的格式
      */
     fun setFormat(vararg format: BarcodeFormat)
+
+    /**
+     * 解码
+     */
+    fun decode(image: ImageProxy): ImageResult
 }

@@ -12,4 +12,6 @@ interface Source {
      * 取出一帧图片
      */
     fun take(): ImageProxy
+
+    fun close()
 }
