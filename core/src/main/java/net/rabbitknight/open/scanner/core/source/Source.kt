@@ -1,6 +1,6 @@
 package net.rabbitknight.open.scanner.core.source
 
-import net.rabbitknight.open.scanner.core.image.ImageProxy
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 
 interface Source {
     /**
@@ -11,7 +11,7 @@ interface Source {
     /**
      * 取出一帧图片
      */
-    fun take(): ImageProxy
+    fun take(): ImageWrapper
 
     fun close()
 }

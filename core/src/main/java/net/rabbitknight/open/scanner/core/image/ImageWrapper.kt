@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 /**
  * 图像代理
  */
-interface ImageProxy {
+interface ImageWrapper {
     /**
      * Closes the underlying [android.media.Image].
      *
@@ -25,13 +25,6 @@ interface ImageProxy {
     val format: Int
 
     /**
-     * Returns the image height.
-     *
-     * @see android.media.Image.getHeight
-     */
-    val height: Int
-
-    /**
      * Returns the image width.
      *
      * @see android.media.Image.getWidth
@@ -39,18 +32,30 @@ interface ImageProxy {
     val width: Int
 
     /**
+     * Returns the image height.
+     *
+     * @see android.media.Image.getHeight
+     */
+    val height: Int
+
+    /**
+     * timestamp
+     */
+    val timestamp: Long
+
+    /**
      * Returns the array of planes.
      *
      * @see android.media.Image.getPlanes
      */
-    val planes: Array<PlaneProxy>
+    val planes: Array<PlaneWrapper>
 
     val payload: Any?
 
     /**
      * A plane proxy which has an analogous interface as [android.media.Image.Plane].
      */
-    interface PlaneProxy {
+    interface PlaneWrapper {
         /**
          * Returns the row stride.
          *

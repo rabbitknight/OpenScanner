@@ -5,7 +5,7 @@ import com.google.zxing.MultiFormatReader
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
-import net.rabbitknight.open.scanner.core.image.ImageProxy
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.ImageResult
 
 class ZXingEngine : Engine {
@@ -23,7 +23,7 @@ class ZXingEngine : Engine {
         zxingCore.setHints(hints)
     }
 
-    override fun decode(image: ImageProxy): ImageResult {
+    override fun decode(image: ImageWrapper): ImageResult {
         TODO("map")
     }
 

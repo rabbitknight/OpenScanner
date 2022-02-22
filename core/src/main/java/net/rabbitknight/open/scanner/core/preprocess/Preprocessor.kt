@@ -2,7 +2,7 @@ package net.rabbitknight.open.scanner.core.preprocess
 
 import android.content.Context
 import net.rabbitknight.open.scanner.core.config.ScannerConfig
-import net.rabbitknight.open.scanner.core.image.ImageProxy
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
 import net.rabbitknight.open.scanner.core.source.Source
 import java.util.concurrent.BlockingQueue
@@ -15,7 +15,7 @@ import java.util.concurrent.BlockingQueue
 class Preprocessor(context: Context) : IModule {
     private lateinit var config: ScannerConfig
     private var source: Source? = null
-    private var sink: BlockingQueue<ImageProxy>? = null
+    private var sink: BlockingQueue<ImageWrapper>? = null
 
     override fun onConfig(config: ScannerConfig) {
         this.config = config
@@ -35,7 +35,7 @@ class Preprocessor(context: Context) : IModule {
         this.source = source
     }
 
-    fun setSink(blockingQueue: BlockingQueue<ImageProxy>) {
+    fun setSink(blockingQueue: BlockingQueue<ImageWrapper>) {
         this.sink = blockingQueue
     }
 }
