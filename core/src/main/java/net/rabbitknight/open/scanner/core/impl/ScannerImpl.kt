@@ -3,7 +3,7 @@ package net.rabbitknight.open.scanner.core.impl
 import android.content.Context
 import android.os.Handler
 import net.rabbitknight.open.scanner.core.Scanner
-import net.rabbitknight.open.scanner.core.config.ScannerConfig
+import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.engine.EngineModule
 import net.rabbitknight.open.scanner.core.preprocess.Preprocessor
@@ -18,7 +18,7 @@ class ScannerImpl(context: Context, vararg engines: Class<out Engine>) : Scanner
     private val engineModule = EngineModule(*engines)
     private val modules = listOf(coreThread, preprocessor, engineModule)
 
-    override fun setConfig(config: ScannerConfig) {
+    override fun setConfig(config: Config) {
         modules.forEach { it.onConfig(config) }
     }
 

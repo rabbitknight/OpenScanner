@@ -1,7 +1,7 @@
 package net.rabbitknight.open.scanner.core.engine
 
 import android.os.Handler
-import net.rabbitknight.open.scanner.core.config.ScannerConfig
+import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
 import net.rabbitknight.open.scanner.core.result.ImageResult
@@ -14,7 +14,7 @@ class EngineModule(vararg engines: Class<out Engine>) : IModule {
     private val outputQueue = LinkedBlockingQueue<ImageResult>()
     private var resultListener: Pair<Handler?, (ImageResult) -> Unit>? = null
 
-    override fun onConfig(config: ScannerConfig) {
+    override fun onConfig(config: Config) {
     }
 
     override fun onStart() {

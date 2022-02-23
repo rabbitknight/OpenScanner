@@ -2,7 +2,7 @@ package net.rabbitknight.open.scanner.core.config
 
 import net.rabbitknight.open.scanner.core.result.RectF
 
-data class ScannerConfig(
+data class Config(
     /**
      * 取景器位置
      */

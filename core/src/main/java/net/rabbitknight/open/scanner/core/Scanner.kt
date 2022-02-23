@@ -1,7 +1,7 @@
 package net.rabbitknight.open.scanner.core
 
 import android.os.Handler
-import net.rabbitknight.open.scanner.core.config.ScannerConfig
+import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.source.Source
 import java.util.concurrent.BlockingQueue
@@ -10,7 +10,7 @@ interface Scanner {
     /**
      * 配置
      */
-    fun setConfig(config: ScannerConfig)
+    fun setConfig(config: Config)
 
     /**
      * 设置数据源

@@ -3,7 +3,8 @@ package net.rabbitknight.open.scanner.core.image
 import java.nio.ByteBuffer
 
 /**
- * 图像代理
+ * 图像包装
+ * 1. 只应该是对图像数据的包装,不应该再开辟任何内存
  */
 interface ImageWrapper {
     /**
