@@ -1,23 +1,81 @@
 package net.rabbitknight.open.scanner.engine.zbar
 
+import android.graphics.ImageFormat
+import net.rabbitknight.open.scanner.core.C.CODE_FAIL
+import net.rabbitknight.open.scanner.core.C.CODE_SUCCESS
+import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
+import net.rabbitknight.open.scanner.core.result.Rect
+import net.rabbitknight.open.scanner.engine.zbar.C.ZBAR_FORMAT_Y800
+import net.sourceforge.zbar.Config
+import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
 import net.sourceforge.zbar.Symbol
 
 class ZBarEngine : Engine {
-    private val imageScanner = ImageScanner()
+    private val zbarScanner = ImageScanner().also {
+        this.setFormat(QR_CODE)
+    }
+    private var buffer = ByteArray(1024 * 1024 * 1)
+    private var zbarImage = Image(ZBAR_FORMAT_Y800)
+
     override fun supportFormat(format: BarcodeFormat): Boolean {
         return map(format) != null
     }
 
     override fun setFormat(vararg format: BarcodeFormat) {
+        zbarScanner.setConfig(C.ZBAR_ALL, Config.ENABLE, 0)
+        val formats = format.mapNotNull { map(it) }
+        formats.forEach {
+            zbarScanner.setConfig(it, Config.ENABLE, 1)
+        }
     }
 
     override fun decode(image: ImageWrapper): ImageResult {
+        val supports = listOf(
+            net.rabbitknight.open.scanner.core.C.Y8,
+            ImageFormat.YV12,
+            ImageFormat.YUV_420_888
+        )
+        if (supports.all { image.format != it }) {
+            throw ScannerException("not support format ${image.format}")
+        }
+        val width = image.width
+        val height = image.height
+        val timestamp = image.timestamp
+        // resize buffer
+        buffer.let {
+            val wanted = image.width * image.height
+            if (wanted > buffer.size) buffer = ByteArray(wanted)
+        }
+        // to bytebuffer
+        buffer.let {
+            image.planes[0].toByteArray(it, width, height)
+        }
+        zbarImage.setSize(width, height)
+        zbarImage.setData(buffer)
+        val code = zbarScanner.scanImage(zbarImage)
+        if (code != 0) {
+            val rawResults = zbarScanner.results
+            val barcodeResults = rawResults.mapNotNull {
+                val format = map(it.type)
+                val text = it.data
+                val rawBytes = it.dataBytes
+                if (format != null) {
+                    BarcodeResult(format, Rect(0, 0, 0, 0), text, rawBytes)
+                } else {
+                    null
+                }
+            }
+            return ImageResult(CODE_SUCCESS, timestamp, barcodeResults)
+        } else {
+            return ImageResult(CODE_FAIL, timestamp, emptyList())
+        }
     }
 
     private fun map(format: BarcodeFormat): Int? {
@@ -58,6 +116,17 @@ class ZBarEngine : Engine {
             Symbol.UPCA -> UPC_A
             Symbol.UPCE -> UPC_E
             else -> null
+        }
+    }
+
+    private fun ImageWrapper.PlaneWrapper.toByteArray(out: ByteArray, width: Int, height: Int) {
+        buffer.rewind()
+        val size = buffer.remaining()
+        var position = 0
+        for (row in 0 until height) {
+            buffer.get(out, position, width)
+            position += width
+            buffer.position(Math.min(size, buffer.position() - width + rowStride))
         }
     }
 }

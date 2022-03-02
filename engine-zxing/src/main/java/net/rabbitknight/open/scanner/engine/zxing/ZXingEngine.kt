@@ -55,7 +55,7 @@ class ZXingEngine : Engine {
         val result: ImageResult = try {
             zxingCore.decode(bitmap).toImageResult(timestamp)
         } catch (e: Exception) {
-            ImageResult(C.CODE_SUCCESS, timestamp, emptyMap())
+            ImageResult(C.CODE_FAIL, timestamp, emptyList())
         }
         return result
     }
@@ -122,7 +122,6 @@ class ZXingEngine : Engine {
         val barcodeResult = BarcodeResult(
             format, Rect(0, 0, 0, 0), this.text, this.rawBytes
         )
-        val result = mapOf(format to listOf(barcodeResult))
-        return ImageResult(C.CODE_SUCCESS, timestamp, result)
+        return ImageResult(C.CODE_SUCCESS, timestamp, listOf(barcodeResult))
     }
 }
