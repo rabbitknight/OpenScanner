@@ -18,7 +18,8 @@ include_directories(include/opencv2/wechat_qrcode.hpp)
 # You can define multiple libraries, and CMake builds them for you.
 # Gradle automatically packages shared libraries with your APK.
 
-file(GLOB_RECURSE SRC_FILES "*.cpp")
+file(GLOB_RECURSE SRC_QRCODE "wechat_qrcode/*.cpp")
+file(GLOB_RECURSE SRC_ENGINE "wechat_engine*.cpp")
 
 add_library( # Sets the name of the library.
         wechat_qrcode
@@ -27,7 +28,16 @@ add_library( # Sets the name of the library.
         SHARED
 
         # Provides a relative path to your source file(s).
-        ${SRC_FILES})
+        ${SRC_QRCODE})
+
+add_library( # Sets the name of the library.
+        wechat_engine
+
+        # Sets the library as a shared library.
+        SHARED
+
+        # Provides a relative path to your source file(s).
+        ${SRC_ENGINE})
 add_library(
         opencv_java4
         SHARED
@@ -56,6 +66,15 @@ find_library( # Sets the name of the path variable.
 # build script, prebuilt third-party libraries, or system libraries.
 
 target_link_libraries( # Specifies the target library.
+        wechat_qrcode
+        opencv_java4
+        # Links the target library to the log library
+        # included in the NDK.
+        ${log-lib}
+        )
+
+target_link_libraries( # Specifies the target library.
+        wechat_engine
         wechat_qrcode
         opencv_java4
         # Links the target library to the log library
