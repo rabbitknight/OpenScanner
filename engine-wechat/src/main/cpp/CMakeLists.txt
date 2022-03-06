@@ -11,6 +11,7 @@ cmake_minimum_required(VERSION 3.10.2)
 project("wechat_qrcode")
 include_directories(include)
 include_directories(include/opencv2/wechat_qrcode)
+include_directories(wechat_qrcode)
 include_directories(include/opencv2/wechat_qrcode.hpp)
 
 # Creates and names a library, sets it as either STATIC
@@ -19,7 +20,7 @@ include_directories(include/opencv2/wechat_qrcode.hpp)
 # Gradle automatically packages shared libraries with your APK.
 
 file(GLOB_RECURSE SRC_QRCODE "wechat_qrcode/*.cpp")
-file(GLOB_RECURSE SRC_ENGINE "wechat_engine*.cpp")
+file(GLOB_RECURSE SRC_ENGINE "wechat_engine/*.cpp")
 
 add_library( # Sets the name of the library.
         wechat_qrcode
