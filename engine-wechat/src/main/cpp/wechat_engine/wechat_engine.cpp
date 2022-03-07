@@ -18,7 +18,7 @@
  * refer to WeChatQrCode but expose #decode & #detect
  */
 namespace cv {
-    namespace wechat_engine {
+    namespace wechat_qrcode {
         class WeChatEngine::Impl {
         public:
             Impl() {}

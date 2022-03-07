@@ -7,7 +7,7 @@
 #include "wechat_engine.hpp"
 #include <jni.h>
 
-using namespace cv::wechat_engine;
+using namespace cv::wechat_qrcode;
 
 extern "C"
 JNIEXPORT jlong JNICALL
@@ -40,4 +40,36 @@ Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_release(JNIEnv *en
         auto *qrcode = (WeChatEngine *) peer;
         delete qrcode;
     }
+}
+
+extern "C"
+JNIEXPORT jintArray JNICALL
+Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_detect(JNIEnv *env, jobject thiz,
+                                                                     jlong peer, jbyteArray image,
+                                                                     jint width, jint height) {
+    if (0 == peer) {
+        return nullptr;
+    }
+    auto *qrcode = (WeChatEngine *) peer;
+    auto *buffer = env->GetByteArrayElements(image, NULL);
+    // cvt bytebuffer to Mat
+    cv::Mat gray = cv::Mat(width, height, CV_8UC1, buffer);
+    // decode
+    auto points = qrcode->detect(gray);
+    // release bytebuffer
+    env->ReleaseByteArrayElements(image, buffer, 0);
+
+    // cvt result
+    int size = (jsize) points.size() * 4;
+    jintArray result = env->NewIntArray(size);
+    int *rects = new int[size];
+    for (int i = 0; i < points.size(); ++i) {
+        auto point = points[i];
+        rects[i * 4 + 0] = point.at<int>(0, 0); // left
+        rects[i * 4 + 1] = point.at<int>(0, 1); // top
+        rects[i * 4 + 2] = point.at<int>(2, 0); // right
+        rects[i * 4 + 3] = point.at<int>(2, 1); // bottom
+    }
+    env->SetIntArrayRegion(result, 0, size, rects);
+    return result;
 }

@@ -12,7 +12,7 @@
 /** @defgroup wechat_qrcode WeChat QR code detector for detecting and parsing QR code.
  */
 namespace cv {
-    namespace wechat_engine {
+    namespace wechat_qrcode {
 //! @addtogroup wechat_qrcode
 //! @{
 /**
@@ -35,9 +35,9 @@ namespace cv {
              * @param super_resolution_caffe_model_path caffe file path for the super resolution model
              */
             CV_WRAP WeChatEngine(const std::string &detector_prototxt_path = "",
-                                     const std::string &detector_caffe_model_path = "",
-                                     const std::string &super_resolution_prototxt_path = "",
-                                     const std::string &super_resolution_caffe_model_path = "");
+                                 const std::string &detector_caffe_model_path = "",
+                                 const std::string &super_resolution_prototxt_path = "",
+                                 const std::string &super_resolution_caffe_model_path = "");
 
             ~WeChatEngine() {};
 
@@ -50,7 +50,7 @@ namespace cv {
              * empty if not found.
              * @return list of decoded string.
              */
-            std::vector <std::string>
+            std::vector<std::string>
             detectAndDecode(InputArray img, OutputArrayOfArrays points = noArray());
 
             /**
@@ -59,7 +59,7 @@ namespace cv {
         * @param img supports grayscale or color (BGR) image.
         * @return vector<Mat> detected QR code bounding boxes.
         */
-            std::vector <Mat> detect(const Mat &img);
+            std::vector<Mat> detect(const Mat &img);
 
             /**
              * @brief decode QR codes from detected points
@@ -70,14 +70,14 @@ namespace cv {
              * @param points succussfully decoded qrcode with bounding box points.
              * @return vector<string>
              */
-            std::vector <std::string> decode(const Mat &img, std::vector <Mat> &candidate_points,
-                                             std::vector <Mat> &points);
+            std::vector<std::string> decode(const Mat &img, std::vector<Mat> &candidate_points,
+                                            std::vector<Mat> &points);
 
 
         protected:
             class Impl;
 
-            Ptr <Impl> p;
+            Ptr<Impl> p;
         };
 
 //! @}
