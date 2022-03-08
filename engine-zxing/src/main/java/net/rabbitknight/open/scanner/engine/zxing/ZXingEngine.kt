@@ -32,7 +32,7 @@ class ZXingEngine : Engine {
     }
 
     override fun decode(image: ImageWrapper): ImageResult {
-        val supports = listOf(C.Y8, ImageFormat.YV12, ImageFormat.YUV_420_888)
+        val supports = listOf(C.Y8, ImageFormat.YV12, ImageFormat.YUV_420_888, ImageFormat.NV21)
         if (supports.all { image.format != it }) {
             throw ScannerException("not support format ${image.format}")
         }

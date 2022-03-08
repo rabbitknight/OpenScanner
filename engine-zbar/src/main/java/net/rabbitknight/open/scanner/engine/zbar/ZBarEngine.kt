@@ -40,6 +40,7 @@ class ZBarEngine : Engine {
         val supports = listOf(
             net.rabbitknight.open.scanner.core.C.Y8,
             ImageFormat.YV12,
+            ImageFormat.NV21,
             ImageFormat.YUV_420_888
         )
         if (supports.all { image.format != it }) {
