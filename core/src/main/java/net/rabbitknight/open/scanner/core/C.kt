@@ -51,4 +51,9 @@ object C {
      * 默认输入缓存大小
      */
     const val DEFAULT_INPUT_CAPACITY = 3
+
+    /**
+     * 默认晃动检测
+     */
+    const val DEFAULT_SHAKE_DETECTOR_ENABLE = false
 }

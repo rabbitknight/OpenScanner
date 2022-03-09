@@ -4,13 +4,13 @@ import android.os.Handler
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
+import net.rabbitknight.open.scanner.core.preprocess.ImageTag
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import java.util.concurrent.ArrayBlockingQueue
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 class EngineModule(vararg engines: Class<out Engine>) : IModule {
-    private val inputQueue = ArrayBlockingQueue<ImageWrapper>(3)
+    private val inputQueue = LinkedBlockingQueue<Pair<ImageWrapper, ImageTag>>()
     private var resultListener: Pair<Handler?, (ImageResult) -> Unit>? = null
 
     override fun onConfig(config: Config) {
@@ -26,7 +26,7 @@ class EngineModule(vararg engines: Class<out Engine>) : IModule {
 
     }
 
-    fun getInput(): BlockingQueue<ImageWrapper> = inputQueue
+    fun getInput(): BlockingQueue<Pair<ImageWrapper, ImageTag>> = inputQueue
 
     fun getOutput(handler: Handler?, callback: (ImageResult) -> Unit) {
         resultListener = Pair(handler, callback)
