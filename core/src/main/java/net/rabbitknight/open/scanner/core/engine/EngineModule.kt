@@ -11,7 +11,6 @@ import java.util.concurrent.LinkedBlockingQueue
 
 class EngineModule(vararg engines: Class<out Engine>) : IModule {
     private val inputQueue = ArrayBlockingQueue<ImageWrapper>(3)
-    private val outputQueue = LinkedBlockingQueue<ImageResult>()
     private var resultListener: Pair<Handler?, (ImageResult) -> Unit>? = null
 
     override fun onConfig(config: Config) {
@@ -28,8 +27,6 @@ class EngineModule(vararg engines: Class<out Engine>) : IModule {
     }
 
     fun getInput(): BlockingQueue<ImageWrapper> = inputQueue
-
-    fun getOutput(): BlockingQueue<ImageResult> = outputQueue
 
     fun getOutput(handler: Handler?, callback: (ImageResult) -> Unit) {
         resultListener = Pair(handler, callback)

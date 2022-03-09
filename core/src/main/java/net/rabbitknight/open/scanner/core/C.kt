@@ -41,4 +41,14 @@ object C {
      * @see android.hardware.camera2.CameraDevice
      */
     const val Y8 = 0x20203859
+
+    /**
+     * 调度频率 每16ms执行一次检测
+     */
+    const val SCHEDULE_PERIOD_MILS = 16L
+
+    /**
+     * 默认输入缓存大小
+     */
+    const val DEFAULT_INPUT_CAPACITY = 3
 }

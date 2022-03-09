@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.core.config
 
+import net.rabbitknight.open.scanner.core.C.DEFAULT_INPUT_CAPACITY
 import net.rabbitknight.open.scanner.core.result.RectF
 
 data class Config(
@@ -18,7 +19,7 @@ data class Config(
     val enableShakeFilter: Boolean,
 
     /**
-     * 检测帧率
+     * 输入缓存大小
      */
-    val decodeFps: Int,
+    val inputCapacity: Int = DEFAULT_INPUT_CAPACITY
 )

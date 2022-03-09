@@ -4,8 +4,8 @@ import android.content.Context
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
-import net.rabbitknight.open.scanner.core.source.Source
 import java.util.concurrent.BlockingQueue
+import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * 预处理引擎
@@ -14,7 +14,7 @@ import java.util.concurrent.BlockingQueue
  */
 class Preprocessor(context: Context) : IModule {
     private lateinit var config: Config
-    private var source: Source? = null
+    private var source = LinkedBlockingQueue<ImageWrapper>()
     private var sink: BlockingQueue<ImageWrapper>? = null
 
     override fun onConfig(config: Config) {
@@ -31,8 +31,12 @@ class Preprocessor(context: Context) : IModule {
 
     }
 
-    fun setSource(source: Source) {
-        this.source = source
+    fun process(image: ImageWrapper): Boolean {
+        val size = source.size
+        if (size > config.inputCapacity) {
+            return false
+        }
+        return source.offer(image)
     }
 
     fun setSink(blockingQueue: BlockingQueue<ImageWrapper>) {

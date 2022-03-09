@@ -2,9 +2,8 @@ package net.rabbitknight.open.scanner.core
 
 import android.os.Handler
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import net.rabbitknight.open.scanner.core.source.Source
-import java.util.concurrent.BlockingQueue
 
 interface Scanner {
     /**
@@ -13,14 +12,9 @@ interface Scanner {
     fun setConfig(config: Config)
 
     /**
-     * 设置数据源
+     * 处理图像
      */
-    fun setSource(source: Source)
-
-    /**
-     * 获取结果
-     */
-    fun getResult(): BlockingQueue<ImageResult>
+    fun process(image: ImageWrapper): Boolean
 
     /**
      * 获取结果

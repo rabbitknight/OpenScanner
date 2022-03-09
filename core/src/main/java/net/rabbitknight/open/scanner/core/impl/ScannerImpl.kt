@@ -6,11 +6,10 @@ import net.rabbitknight.open.scanner.core.Scanner
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.engine.EngineModule
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.preprocess.Preprocessor
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import net.rabbitknight.open.scanner.core.source.Source
 import net.rabbitknight.open.scanner.core.thread.CoreThread
-import java.util.concurrent.BlockingQueue
 
 class ScannerImpl(context: Context, vararg engines: Class<out Engine>) : Scanner, Runnable {
     private val coreThread = CoreThread(this)
@@ -18,16 +17,17 @@ class ScannerImpl(context: Context, vararg engines: Class<out Engine>) : Scanner
     private val engineModule = EngineModule(*engines)
     private val modules = listOf(coreThread, preprocessor, engineModule)
 
+    init {
+        preprocessor.setSink(engineModule.getInput())
+    }
+
     override fun setConfig(config: Config) {
         modules.forEach { it.onConfig(config) }
     }
 
-    override fun setSource(source: Source) {
-        preprocessor.setSink(engineModule.getInput())
-        preprocessor.setSource(source)
+    override fun process(image: ImageWrapper): Boolean {
+        return preprocessor.process(image)
     }
-
-    override fun getResult(): BlockingQueue<ImageResult> = engineModule.getOutput()
 
     override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) =
         engineModule.getOutput(handler, callback)
