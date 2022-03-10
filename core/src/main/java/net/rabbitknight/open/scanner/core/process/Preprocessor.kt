@@ -1,4 +1,4 @@
-package net.rabbitknight.open.scanner.core.preprocess
+package net.rabbitknight.open.scanner.core.process
 
 import android.content.Context
 import net.rabbitknight.open.scanner.core.config.Config
@@ -10,12 +10,13 @@ import java.util.concurrent.LinkedBlockingQueue
 /**
  * 预处理引擎
  * + 根据取景框的配置 对图像数据进行剪裁
- * + 对原始的数据进行处理 处理成符合各个引擎的数据
+ * + 对原始的数据进行处理 处理成[net.rabbitknight.open.scanner.core.C.Y8]的数据
+ * + 根据晃动检测模块的开关 判断是否处理图像
  */
 class Preprocessor(context: Context) : IModule {
     private lateinit var config: Config
     private var source = LinkedBlockingQueue<ImageWrapper>()
-    private var sink: BlockingQueue<Pair<ImageWrapper, ImageTag>>? = null
+    private var sink: BlockingQueue<ImageFrame>? = null
 
     override fun onConfig(config: Config) {
         this.config = config
@@ -29,7 +30,6 @@ class Preprocessor(context: Context) : IModule {
 
     override fun onStep() {
         // TODO: 晃动检测
-
         val nextImage = source.poll()
         // TODO: 根据取景框剪裁
         // TODO: 二维码检测
@@ -45,7 +45,7 @@ class Preprocessor(context: Context) : IModule {
         return source.offer(image)
     }
 
-    fun setSink(blockingQueue: BlockingQueue<Pair<ImageWrapper, ImageTag>>) {
-        this.sink = blockingQueue
+    fun setSink(sink: BlockingQueue<ImageFrame>) {
+        this.sink = sink
     }
 }

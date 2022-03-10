@@ -5,10 +5,9 @@ import android.os.Handler
 import android.os.Looper
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import net.rabbitknight.open.scanner.core.source.Source
-import java.util.concurrent.BlockingQueue
 
 class OpenScanner private constructor(
     context: Context,
@@ -33,19 +32,9 @@ class OpenScanner private constructor(
         }
     }
 
-    /**
-     * 设置数据源
-     */
-    override fun setSource(source: Source) {
-        mainHandler.post {
-            scannerImpl.setSource(source)
-        }
+    override fun process(image: ImageWrapper): Boolean {
+        return scannerImpl.process(image)
     }
-
-    /**
-     * 获取结果
-     */
-    override fun getResult(): BlockingQueue<ImageResult> = scannerImpl.getResult()
 
     /**
      * 获取结果

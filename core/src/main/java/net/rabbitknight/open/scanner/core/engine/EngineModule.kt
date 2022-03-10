@@ -1,17 +1,14 @@
 package net.rabbitknight.open.scanner.core.engine
 
-import android.os.Handler
 import net.rabbitknight.open.scanner.core.config.Config
-import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
-import net.rabbitknight.open.scanner.core.preprocess.ImageTag
-import net.rabbitknight.open.scanner.core.result.ImageResult
+import net.rabbitknight.open.scanner.core.process.ImageFrame
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
 class EngineModule(vararg engines: Class<out Engine>) : IModule {
-    private val inputQueue = LinkedBlockingQueue<Pair<ImageWrapper, ImageTag>>()
-    private var resultListener: Pair<Handler?, (ImageResult) -> Unit>? = null
+    private val source = LinkedBlockingQueue<ImageFrame>()
+    private var sink: BlockingQueue<ImageFrame>? = null
 
     override fun onConfig(config: Config) {
     }
@@ -26,9 +23,9 @@ class EngineModule(vararg engines: Class<out Engine>) : IModule {
 
     }
 
-    fun getInput(): BlockingQueue<Pair<ImageWrapper, ImageTag>> = inputQueue
+    fun getSource(): BlockingQueue<ImageFrame> = source
 
-    fun getOutput(handler: Handler?, callback: (ImageResult) -> Unit) {
-        resultListener = Pair(handler, callback)
+    fun setSink(blockingQueue: BlockingQueue<ImageFrame>) {
+        this.sink = blockingQueue
     }
 }
