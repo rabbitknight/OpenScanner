@@ -34,7 +34,7 @@ class ByteArrayImage(
             })
         } else {
             ByteArrayPlane(width, 1, let {
-                yuvBuffer.position(yLen)
+                yuvBuffer.position(yLen + 1)
                 yuvBuffer.slice().apply { limit(uLen + vLen) }
             })
         }
@@ -45,7 +45,7 @@ class ByteArrayImage(
             })
         } else {
             ByteArrayPlane(width, 1, let {
-                yuvBuffer.position(yLen + 1)
+                yuvBuffer.position(yLen)
                 yuvBuffer.slice().apply { limit(uLen + vLen - 1) }
             })
         }
