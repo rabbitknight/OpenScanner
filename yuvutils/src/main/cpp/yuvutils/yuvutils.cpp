@@ -4,11 +4,11 @@
 extern "C"
 JNIEXPORT void JNICALL
 Java_net_rabbitknight_open_yuvutils_NativeLib_yuvCompress(JNIEnv *env, jclass jcls,
-                                         jbyteArray nv21Src, jint width,
-                                         jint height, jbyteArray i420Dst,
-                                         jint dst_width, jint dst_height,
-                                         jint mode, jint degree,
-                                         jboolean isMirror) {
+                                                          jbyteArray nv21Src, jint width,
+                                                          jint height, jbyteArray i420Dst,
+                                                          jint dst_width, jint dst_height,
+                                                          jint mode, jint degree,
+                                                          jboolean isMirror) {
 
     jbyte *src_nv21_data = env->GetByteArrayElements(nv21Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
@@ -63,12 +63,14 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvCompress(JNIEnv *env, jclass jc
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvCropI420(JNIEnv *env, jclass jcls, jbyteArray src_, jint srcOffset,
-                                         jint width,
-                                         jint height, jbyteArray dst_, jint dstOffset,
-                                         jint dst_width,
-                                         jint dst_height,
-                                         jint left, jint top) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvCropI420(JNIEnv *env, jclass jcls, jbyteArray src_,
+                                                          jint srcOffset,
+                                                          jint width,
+                                                          jint height, jbyteArray dst_,
+                                                          jint dstOffset,
+                                                          jint dst_width,
+                                                          jint dst_height,
+                                                          jint left, jint top) {
     //裁剪的区域大小不对
     if (left + dst_width > width || top + dst_height > height) {
         return;
@@ -89,8 +91,10 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvCropI420(JNIEnv *env, jclass jc
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvMirrorI420(JNIEnv *env, jclass jcls, jbyteArray i420Src,
-                                           jint width, jint height, jbyteArray i420Dst) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvMirrorI420(JNIEnv *env, jclass jcls,
+                                                            jbyteArray i420Src,
+                                                            jint width, jint height,
+                                                            jbyteArray i420Dst) {
     jbyte *src_i420_data = env->GetByteArrayElements(i420Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
     // i420数据镜像
@@ -100,9 +104,12 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvMirrorI420(JNIEnv *env, jclass 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvScaleI420(JNIEnv *env, jclass jcls, jbyteArray i420Src,
-                                          jint width, jint height, jbyteArray i420Dst,
-                                          jint dstWidth, jint dstHeight, jint mode) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvScaleI420(JNIEnv *env, jclass jcls,
+                                                           jbyteArray i420Src,
+                                                           jint width, jint height,
+                                                           jbyteArray i420Dst,
+                                                           jint dstWidth, jint dstHeight,
+                                                           jint mode) {
     jbyte *src_i420_data = env->GetByteArrayElements(i420Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
     // i420数据缩放
@@ -112,9 +119,11 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvScaleI420(JNIEnv *env, jclass j
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvRotateI420(JNIEnv *env, jclass jcls, jbyteArray i420Src,
-                                           jint width, jint height, jbyteArray i420Dst,
-                                           jint degree) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvRotateI420(JNIEnv *env, jclass jcls,
+                                                            jbyteArray i420Src,
+                                                            jint width, jint height,
+                                                            jbyteArray i420Dst,
+                                                            jint degree) {
     jbyte *src_i420_data = env->GetByteArrayElements(i420Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
     // i420数据旋转
@@ -124,8 +133,10 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvRotateI420(JNIEnv *env, jclass 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvNV21ToI420(JNIEnv *env, jclass jcls, jbyteArray nv21Src,
-                                           jint width, jint height, jbyteArray i420Dst) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvNV21ToI420(JNIEnv *env, jclass jcls,
+                                                            jbyteArray nv21Src,
+                                                            jint width, jint height,
+                                                            jbyteArray i420Dst) {
     jbyte *src_nv21_data = env->GetByteArrayElements(nv21Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
     // nv21转化为i420
@@ -135,8 +146,10 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvNV21ToI420(JNIEnv *env, jclass 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvI420ToNV21(JNIEnv *env, jclass jcls, jbyteArray i420Src,
-                                           jint width, jint height, jbyteArray nv21Dst) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvI420ToNV21(JNIEnv *env, jclass jcls,
+                                                            jbyteArray i420Src,
+                                                            jint width, jint height,
+                                                            jbyteArray nv21Dst) {
 
     jbyte *src_i420_data = env->GetByteArrayElements(i420Src, NULL);
     jbyte *dst_nv21_data = env->GetByteArrayElements(nv21Dst, NULL);
@@ -146,9 +159,11 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvI420ToNV21(JNIEnv *env, jclass 
 
 extern "C"
 JNIEXPORT void JNICALL
-Java_net_rabbitknight_open_yuvutils_NativeLib_yuvNV21ToI420AndRotate(JNIEnv *env, jclass jcls, jbyteArray nv21Src,
-                                                    jint width, jint height, jbyteArray i420Dst,
-                                                    jint degree) {
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvNV21ToI420AndRotate(JNIEnv *env, jclass jcls,
+                                                                     jbyteArray nv21Src,
+                                                                     jint width, jint height,
+                                                                     jbyteArray i420Dst,
+                                                                     jint degree) {
     jbyte *src_nv21_data = env->GetByteArrayElements(nv21Src, NULL);
     jbyte *dst_i420_data = env->GetByteArrayElements(i420Dst, NULL);
     switch (degree) {
@@ -564,5 +579,40 @@ Java_net_rabbitknight_open_yuvutils_NativeLib_yuvAndroid420ToI420__Ljava_nio_Byt
     env->ReleaseByteArrayElements(dstY, (jbyte *) dst_y, 0);
     env->ReleaseByteArrayElements(dstU, (jbyte *) dst_u, 0);
     env->ReleaseByteArrayElements(dstV, (jbyte *) dst_v, 0);
+    return rst;
+}
+
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_NativeLib_yuvConvertToI420(JNIEnv *env, jclass clazz,
+                                                               jbyteArray src, jint length,
+                                                               jbyteArray dst_y, jint dst_offset_y,
+                                                               jint dst_stride_y, jbyteArray dst_u,
+                                                               jint dst_offset_u, jint dst_stride_u,
+                                                               jbyteArray dst_v, jint dst_offset_v,
+                                                               jint dst_stride_v, jint left,
+                                                               jint top, jint crop_width,
+                                                               jint crop_height, jint src_width,
+                                                               jint src_height, jint rotate,
+                                                               jint format) {
+
+    auto *src_frame = (uint8_t *) env->GetDirectBufferAddress(src);
+    auto rotationMode = static_cast<libyuv::RotationMode>(rotate);
+    auto fourcc = static_cast<libyuv::FourCC>(format);
+    auto *dstY = (uint8_t *) env->GetByteArrayElements(dst_y, NULL);
+    auto *dstU = (uint8_t *) env->GetByteArrayElements(dst_u, NULL);
+    auto *dstV = (uint8_t *) env->GetByteArrayElements(dst_v, NULL);
+    int rst = libyuv::ConvertToI420(src_frame, length,
+                                    dstY + dst_offset_y, dst_stride_y,
+                                    dstU + dst_offset_u, dst_stride_u,
+                                    dstV + dst_offset_v, dst_stride_v,
+                                    left, top, src_width, src_height, crop_width, crop_height,
+                                    rotationMode, format
+    );
+
+    env->ReleaseByteArrayElements(dst_y, (jbyte *) dstY, 0);
+    env->ReleaseByteArrayElements(dst_u, (jbyte *) dstU, 0);
+    env->ReleaseByteArrayElements(dst_v, (jbyte *) dstV, 0);
     return rst;
 }

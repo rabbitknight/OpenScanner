@@ -484,4 +484,14 @@ public class NativeLib {
                 dstV, dstOffsetV, stStrideV,
                 image.getWidth(), image.getHeight());
     }
+
+
+    public native static int yuvConvertToI420(byte[] src, int length,
+                                              byte[] dstY, int dstOffsetY, int dstStrideY,
+                                              byte[] dstU, int dstOffsetU, int dstStrideU,
+                                              byte[] dstV, int dstOffsetV, int dstStrideV,
+                                              int left, int top, int cropWidth, int cropHeight,
+                                              int srcWidth, int srcHeight,
+                                              int rotate, int format);
+
 }

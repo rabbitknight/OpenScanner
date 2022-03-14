@@ -43,6 +43,11 @@ object C {
     const val Y8 = 0x20203859
 
     /**
+     * @see [i420](https://www.fourcc.org/pixel-format/yuv-i420/)
+     */
+    const val I420 = 0x30323449
+
+    /**
      * 调度频率 每16ms执行一次检测
      */
     const val SCHEDULE_PERIOD_MILS = 16L

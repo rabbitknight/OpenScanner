@@ -51,7 +51,7 @@ interface ImageWrapper {
      */
     val planes: Array<PlaneWrapper>
 
-    val payload: Any?
+    val payload: Any
 
     /**
      * A plane proxy which has an analogous interface as [android.media.Image.Plane].
