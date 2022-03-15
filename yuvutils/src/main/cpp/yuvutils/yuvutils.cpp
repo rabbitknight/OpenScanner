@@ -4,7 +4,7 @@
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvMirrorI420(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_mirrorI420(
         JNIEnv *env, jclass clazz,
         jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
         jbyteArray _src_u, jint src_offset_u, jint src_stride_u,
@@ -44,7 +44,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvMirrorI420(
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvScaleI420(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_scaleI420(
         JNIEnv *env, jclass clazz,
         jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
         jbyteArray _src_u, jint src_offset_u, jint src_stride_u,
@@ -85,7 +85,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvScaleI420(
 }
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvRotateI420(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_rotateI420(
         JNIEnv *env, jclass clazz,
         jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
         jbyteArray _src_u, jint src_offset_u, jint src_stride_u,
@@ -125,7 +125,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvRotateI420(
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvI420ToNV21(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertI420ToNV21(
         JNIEnv *env, jclass clazz,
         jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
         jbyteArray _src_u, jint src_offset_u, jint src_stride_u,
@@ -157,7 +157,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvI420ToNV21(
 }
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvNV21ToI420(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertNV21ToI420(
         JNIEnv *env, jclass clazz,
         jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
         jbyteArray _src_vu, jint src_offset_vu, jint src_stride_vu,
@@ -191,7 +191,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvNV21ToI420(
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvAndroid420ToI420___3BII_3BII_3BIII_3BII_3BII_3BIIII(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertAndroid420ToI420___3BII_3BII_3BIII_3BII_3BII_3BIIII(
         JNIEnv *env, jclass jcls,
         jbyteArray srcY, jint srcOffsetY, jint strideSrcY,
         jbyteArray srcU, jint srcOffsetU, jint strideSrcU,
@@ -234,7 +234,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvAndroid420ToI420___3BII_3BII_3BI
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvAndroid420ToI420__Ljava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2II_3BII_3BII_3BIIII(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertAndroid420ToI420__Ljava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2II_3BII_3BII_3BIIII(
         JNIEnv *env, jclass jcls,
         jobject yuvPlanesY, jint strideSrcY,
         jobject yuvPlanesU, jint strideSrcU,
@@ -271,7 +271,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvAndroid420ToI420__Ljava_nio_Byte
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToI420___3BII_3BII_3BII_3BIIIIIIIIII(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertToI420___3BII_3BII_3BII_3BIIIIIIIIII(
         JNIEnv *env, jclass clazz, jbyteArray src, jint offset, jint length, jbyteArray dst_y,
         jint dst_offset_y, jint dst_stride_y, jbyteArray dst_u, jint dst_offset_u,
         jint dst_stride_u, jbyteArray dst_v, jint dst_offset_v, jint dst_stride_v, jint left,
@@ -304,12 +304,11 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToI420___3BII_3BII_3BII_3
 }
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToI420__Ljava_nio_ByteBuffer_2I_3BII_3BII_3BIIIIIIIIII(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertToI420__Ljava_nio_ByteBuffer_2I_3BII_3BII_3BIIIIIIIIII(
         JNIEnv *env, jclass clazz, jobject src, jint length, jbyteArray dst_y, jint dst_offset_y,
         jint dst_stride_y, jbyteArray dst_u, jint dst_offset_u, jint dst_stride_u, jbyteArray dst_v,
         jint dst_offset_v, jint dst_stride_v, jint left, jint top, jint crop_width,
         jint crop_height, jint src_width, jint src_height, jint rotate, jint format) {
-
     auto *src_frame = (uint8_t *) env->GetDirectBufferAddress(src);
 
     auto *dstY = (uint8_t *) env->GetByteArrayElements(dst_y, NULL);
@@ -330,5 +329,125 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToI420__Ljava_nio_ByteBuf
     env->ReleaseByteArrayElements(dst_y, (jbyte *) dstY, 0);
     env->ReleaseByteArrayElements(dst_u, (jbyte *) dstU, 0);
     env->ReleaseByteArrayElements(dst_v, (jbyte *) dstV, 0);
+    return rst;
+}
+
+
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToARGB(
+        JNIEnv *env, jclass clazz,
+        jbyteArray src, jint offset, jint length,
+        jbyteArray dst, jint dst_offset, jint dst_stride,
+        jint left, jint top, jint crop_width, jint crop_height,
+        jint src_width, jint src_height,
+        jint rotate, jint format) {
+    auto *src_frame = (uint8_t *) env->GetByteArrayElements(src, NULL);
+    auto *dst_argb = (uint8_t *) env->GetByteArrayElements(dst, NULL);
+
+    auto rotationMode = static_cast<libyuv::RotationMode>(rotate);
+
+    int rst = libyuv::ConvertToARGB(src_frame + offset, length,
+                                    dst_argb + dst_offset, dst_stride,
+                                    left, top, src_width, src_height, crop_width, crop_height,
+                                    rotationMode, format);
+
+    env->ReleaseByteArrayElements(src, (jbyte *) src_frame, 0);
+    env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
+    return rst;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertI420ToARGB___3BII_3BII_3BII_3BIIII(
+        JNIEnv *env, jclass clazz,
+        jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
+        jbyteArray _src_u, jint src_offset_u, jint src_stride_u,
+        jbyteArray _src_v, jint src_offset_v, jint src_stride_v,
+        jbyteArray dst, jint dst_offset, jint dst_stride,
+        jint width, jint height) {
+    auto *src_y = (uint8_t *) env->GetByteArrayElements(_src_y, NULL);
+    auto *src_u = (uint8_t *) env->GetByteArrayElements(_src_u, NULL);
+    auto *src_v = (uint8_t *) env->GetByteArrayElements(_src_v, NULL);
+    auto *dst_argb = (uint8_t *) env->GetByteArrayElements(dst, NULL);
+
+    int rst = libyuv::I420ToBGRA(src_y + src_offset_y, src_stride_y,
+                                 src_u + src_offset_u, src_stride_u,
+                                 src_v + src_offset_v, src_stride_v,
+                                 dst_argb + dst_offset, dst_stride,
+                                 width, height);
+
+    env->ReleaseByteArrayElements(_src_y, (jbyte *) src_y, 0);
+    env->ReleaseByteArrayElements(_src_u, (jbyte *) src_u, 0);
+    env->ReleaseByteArrayElements(_src_v, (jbyte *) src_v, 0);
+    env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
+    return rst;
+}
+
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertI420ToARGB__Ljava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2ILjava_nio_ByteBuffer_2I_3BIIII(
+        JNIEnv *env, jclass clazz,
+        jobject _src_y, jint src_stride_y,
+        jobject _src_u, jint src_stride_u,
+        jobject _src_v, jint src_stride_v,
+        jbyteArray dst, jint dst_offset, jint dst_stride,
+        jint width, jint height) {
+    auto *src_y = (uint8_t *) env->GetDirectBufferAddress(_src_y);
+    auto *src_u = (uint8_t *) env->GetDirectBufferAddress(_src_u);
+    auto *src_v = (uint8_t *) env->GetDirectBufferAddress(_src_v);
+    auto *dst_argb = (uint8_t *) env->GetByteArrayElements(dst, NULL);
+
+    int rst = libyuv::I420ToBGRA(src_y, src_stride_y,
+                                 src_u, src_stride_u,
+                                 src_v, src_stride_v,
+                                 dst_argb + dst_offset, dst_stride,
+                                 width, height);
+
+    env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
+    return rst;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertNV21ToBGRA(
+        JNIEnv *env, jclass clazz,
+        jbyteArray _src_y, jint src_offset_y, jint src_stride_y,
+        jbyteArray _src_vu, jint src_offset_vu, jint src_stride_vu,
+        jbyteArray dst, jint dst_offset, jint dst_stride,
+        jint width, jint height) {
+    auto *src_y = (uint8_t *) env->GetByteArrayElements(_src_y, NULL);
+    auto *src_vu = (uint8_t *) env->GetByteArrayElements(_src_vu, NULL);
+    auto *dst_argb = (uint8_t *) env->GetByteArrayElements(dst, NULL);
+
+    int rst = libyuv::NV21ToARGB(src_y + src_offset_y, src_stride_y,
+                                 src_vu + src_offset_vu, src_stride_vu,
+                                 dst_argb + dst_offset, dst_stride,
+                                 width, height);
+
+    env->ReleaseByteArrayElements(_src_y, (jbyte *) src_y, 0);
+    env->ReleaseByteArrayElements(_src_vu, (jbyte *) src_vu, 0);
+    env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
+    return rst;
+}
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertBGRAToARGB(
+        JNIEnv *env, jclass clazz,
+        jbyteArray _src, jint src_offset, jint src_stride,
+        jbyteArray _dst, jint dst_offset, jint dst_stride,
+        jint width, jint height) {
+    auto *src = (uint8_t *) env->GetByteArrayElements(_src, NULL);
+    auto *dst = (uint8_t *) env->GetByteArrayElements(_dst, NULL);
+
+    int rst = libyuv::ARGBToBGRA(
+            src + src_offset, src_stride,
+            dst + dst_offset, dst_stride,
+            width, height
+    );
+    env->ReleaseByteArrayElements(_src, (jbyte *) src, 0);
+    env->ReleaseByteArrayElements(_dst, (jbyte *) dst, 0);
     return rst;
 }

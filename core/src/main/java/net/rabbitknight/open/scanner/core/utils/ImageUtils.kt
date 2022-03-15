@@ -4,7 +4,7 @@ import android.graphics.ImageFormat
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.wrap
-import net.rabbitknight.open.yuvutils.NativeLib
+import net.rabbitknight.open.yuvutils.YuvUtils
 
 object ImageUtils {
 
@@ -24,7 +24,7 @@ object ImageUtils {
         val planeU = input.planes[1]
         val planeV = input.planes[2]
         // 借用i420转换为yv12
-        NativeLib.yuvAndroid420ToI420(
+        YuvUtils.convertAndroid420ToI420(
             planeY.buffer, planeY.rowStride,
             planeU.buffer, planeU.rowStride,
             planeV.buffer, planeV.rowStride,
