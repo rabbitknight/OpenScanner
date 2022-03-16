@@ -28,19 +28,25 @@ class ByteBufferPool(private val maxSize: Long = 1024 * 1024 * 20) {
     fun acquire(width: Int, height: Int, @Format format: String): ByteBuffer {
         val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
         val wantedSize = width * height * pixelSize
+        return acquire(wantedSize)
+    }
 
+    /**
+     * 获取一个buffer
+     */
+    @Synchronized
+    fun acquire(wantedSize: Int): ByteBuffer {
         val possibleSize = sortedSize.ceilingKey(wantedSize) ?: wantedSize
         val remainCount = possibleSize.let { sortedSize[it] } ?: 0
-
         return if (remainCount == 0) {
-            get(width, height, format)
+            get(wantedSize)
         } else {
             sortedSize[possibleSize] = remainCount - 1
             val buffer = cacheMap.get(possibleSize)
             if (buffer != null) {
                 level -= buffer.capacity()
             }
-            return buffer ?: get(width, height, format)
+            return buffer ?: get(wantedSize)
         }
     }
 
@@ -68,7 +74,11 @@ class ByteBufferPool(private val maxSize: Long = 1024 * 1024 * 20) {
     private fun get(width: Int, height: Int, @Format format: String): ByteBuffer {
         val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
         val wantedSize = width * height * pixelSize
-        return ByteBuffer.allocateDirect(wantedSize);
+        return ByteBuffer.allocateDirect(wantedSize)
+    }
+
+    private fun get(size: Int): ByteBuffer {
+        return ByteBuffer.allocateDirect(size)
     }
 
     private fun trimToSize(maxSize: Long) {
