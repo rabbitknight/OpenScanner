@@ -451,3 +451,17 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_convertBGRAToARGB(
     env->ReleaseByteArrayElements(_dst, (jbyte *) dst, 0);
     return rst;
 }
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_fourcc(JNIEnv *env, jclass clazz, jstring _fourcc) {
+    auto *fourcc = env->GetStringUTFChars(_fourcc, NULL);
+    int length = env->GetStringLength(_fourcc);
+    if (length != 4) {
+        env->ReleaseStringUTFChars(_fourcc, fourcc);
+        return -1;
+    }
+    int format = FOURCC(fourcc[0], fourcc[1], fourcc[2], fourcc[3]);
+    env->ReleaseStringUTFChars(_fourcc, fourcc);
+    return format;
+}

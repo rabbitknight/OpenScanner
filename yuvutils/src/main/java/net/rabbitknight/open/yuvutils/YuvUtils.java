@@ -119,4 +119,6 @@ public class YuvUtils {
     public native static int convertBGRAToARGB(byte[] src, int srcOffset, int srcStride,
                                                byte[] dst, int dstOffset, int dstStride,
                                                int width, int height);
+
+    public native static int fourcc(String fourcc);
 }
