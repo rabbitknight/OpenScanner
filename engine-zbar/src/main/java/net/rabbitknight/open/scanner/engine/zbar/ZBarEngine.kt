@@ -19,16 +19,16 @@ import net.sourceforge.zbar.Symbol
 
 class ZBarEngine : Engine {
     private val zbarScanner = ImageScanner().also {
-        this.setFormat(QR_CODE)
+        this.setBarFormat(QR_CODE)
     }
     private var buffer = ByteArray(1024 * 1024 * 1)
     private var zbarImage = Image(ZBAR_FORMAT_Y800)
 
-    override fun supportFormat(format: BarcodeFormat): Boolean {
+    override fun supportBarFormat(format: BarcodeFormat): Boolean {
         return map(format) != null
     }
 
-    override fun setFormat(vararg format: BarcodeFormat) {
+    override fun setBarFormat(vararg format: BarcodeFormat) {
         zbarScanner.setConfig(C.ZBAR_ALL, Config.ENABLE, 0)
         val formats = format.mapNotNull { map(it) }
         formats.forEach {
@@ -36,7 +36,7 @@ class ZBarEngine : Engine {
         }
     }
 
-    override fun decode(image: ImageWrapper): ImageResult {
+    override fun decode(image: ImageWrapper<Any>): ImageResult {
         val supports = listOf(
             net.rabbitknight.open.scanner.core.C.Y8,
             ImageFormat.YV12,
@@ -78,6 +78,8 @@ class ZBarEngine : Engine {
             return ImageResult(CODE_FAIL, timestamp, emptyList())
         }
     }
+
+    override fun preferImageFormat(): Int = ImageFormat.YV12
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {

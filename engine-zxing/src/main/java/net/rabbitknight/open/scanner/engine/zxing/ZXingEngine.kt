@@ -18,14 +18,14 @@ class ZXingEngine : Engine {
     // TODO: shared buffer
     private var buffer = ByteArray(1024 * 1024 * 1)
     private val zxingCore = MultiFormatReader().also {
-        this.setFormat(QR_CODE)
+        this.setBarFormat(QR_CODE)
     }
 
-    override fun supportFormat(format: BarcodeFormat): Boolean {
+    override fun supportBarFormat(format: BarcodeFormat): Boolean {
         return map(format) != null
     }
 
-    override fun setFormat(vararg format: BarcodeFormat) {
+    override fun setBarFormat(vararg format: BarcodeFormat) {
         val formats = format.mapNotNull { map(it) }
         val hints = mapOf(Pair(DecodeHintType.POSSIBLE_FORMATS, formats))
         zxingCore.setHints(hints)

@@ -26,14 +26,14 @@ class WeChatEngine(val context: Context) : Engine {
     // 必须在load之后调用
     private val qrcodeEngine = WeChatQRCode()
 
-    override fun supportFormat(format: BarcodeFormat): Boolean =
+    override fun supportBarFormat(format: BarcodeFormat): Boolean =
         format == BarcodeFormat.QR_CODE
 
-    override fun setFormat(vararg format: BarcodeFormat) {
+    override fun setBarFormat(vararg format: BarcodeFormat) {
         enable = format.contains(BarcodeFormat.QR_CODE)
     }
 
-    override fun decode(image: ImageWrapper): ImageResult {
+    override fun decode(image: ImageWrapper<Any>): ImageResult {
         val supports = listOf(
             C.Y8,
             ImageFormat.YV12,
@@ -75,6 +75,8 @@ class WeChatEngine(val context: Context) : Engine {
             return ImageResult(C.CODE_SUCCESS, timestamp, barcodeResults)
         }
     }
+
+    override fun preferImageFormat(): Int = ImageFormat.YV12
 
     private fun ImageWrapper.PlaneWrapper.toByteArray(out: ByteArray, width: Int, height: Int) {
         buffer.rewind()
