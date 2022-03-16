@@ -6,7 +6,7 @@ import java.nio.ByteBuffer
  * 图像包装
  * 1. 只应该是对图像数据的包装,不应该再开辟任何内存
  */
-interface ImageWrapper {
+interface ImageWrapper<out T : Any> {
     /**
      * Closes the underlying [android.media.Image].
      *
@@ -51,7 +51,7 @@ interface ImageWrapper {
      */
     val planes: Array<PlaneWrapper>
 
-    val payload: Any
+    val payload: T
 
     /**
      * A plane proxy which has an analogous interface as [android.media.Image.Plane].

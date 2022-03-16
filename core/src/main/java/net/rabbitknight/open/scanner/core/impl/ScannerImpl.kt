@@ -28,7 +28,7 @@ class ScannerImpl(context: Context, vararg engines: Class<out Engine>) : Scanner
         modules.forEach { it.onConfig(config) }
     }
 
-    override fun process(image: ImageWrapper): Boolean {
+    override fun process(image: ImageWrapper<Any>): Boolean {
         return preprocessor.process(image)
     }
 

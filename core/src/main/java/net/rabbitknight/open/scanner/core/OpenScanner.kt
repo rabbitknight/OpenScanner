@@ -32,7 +32,7 @@ class OpenScanner private constructor(
         }
     }
 
-    override fun process(image: ImageWrapper): Boolean {
+    override fun process(image: ImageWrapper<Any>): Boolean {
         return scannerImpl.process(image)
     }
 

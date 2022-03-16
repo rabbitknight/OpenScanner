@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 
 class Camera2Image(
     private val image: Image
-) : ImageWrapper {
+) : ImageWrapper<Image> {
     private var planeWrappers: Array<ImageWrapper.PlaneWrapper> = Array(3) { index ->
         val rawPlane = image.planes[index]
         val rowStride = rawPlane.rowStride
@@ -31,7 +31,7 @@ class Camera2Image(
         get() = image.width
     override val planes: Array<ImageWrapper.PlaneWrapper>
         get() = planeWrappers
-    override val payload: Any
+    override val payload: Image
         get() = image
     override val timestamp: Long
         get() = image.timestamp

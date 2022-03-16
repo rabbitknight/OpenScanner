@@ -14,7 +14,7 @@ interface Scanner {
     /**
      * 处理图像
      */
-    fun process(image: ImageWrapper): Boolean
+    fun process(image: ImageWrapper<Any>): Boolean
 
     /**
      * 获取结果

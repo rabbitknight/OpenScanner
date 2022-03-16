@@ -10,7 +10,7 @@ class ByteArrayImage(
     override val width: Int,
     override val height: Int,
     override val timestamp: Long,
-) : ImageWrapper {
+) : ImageWrapper<ByteArray> {
 
     private var planeWrappers: Array<ImageWrapper.PlaneWrapper>
 
@@ -59,7 +59,7 @@ class ByteArrayImage(
     override val planes: Array<ImageWrapper.PlaneWrapper>
         get() = planeWrappers
 
-    override val payload: Any
+    override val payload: ByteArray
         get() = byteArray
 
     internal class ByteArrayPlane(
