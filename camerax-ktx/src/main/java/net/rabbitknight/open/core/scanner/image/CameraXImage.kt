@@ -3,10 +3,12 @@ package net.rabbitknight.open.core.scanner.image
 import androidx.camera.core.ImageProxy
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import java.nio.ByteBuffer
 
 class CameraXImage(
-    private val image: ImageProxy
+    override val owner: WrapperOwner<ImageProxy>,
+    private val image: ImageProxy,
 ) : ImageWrapper<ImageProxy> {
     private var planeWrappers: Array<ImageWrapper.PlaneWrapper> = Array(3) { index ->
         val rawPlane = image.planes[index]
@@ -17,7 +19,7 @@ class CameraXImage(
     }
 
     override fun close() {
-        image.close()
+        owner.close(image)
     }
 
     override val format: String

@@ -4,6 +4,7 @@ import net.rabbitknight.open.scanner.core.ScannerException
 import java.nio.ByteBuffer
 
 class ByteArrayImage(
+    override val owner: WrapperOwner<ByteArray>,
     private val byteArray: ByteArray,
     override val format: String,
     override val width: Int,
@@ -53,6 +54,7 @@ class ByteArrayImage(
 
     override fun close() {
         // no-op
+        owner.close(byteArray)
     }
 
     override val planes: Array<ImageWrapper.PlaneWrapper>

@@ -4,7 +4,8 @@ import android.media.Image
 import java.nio.ByteBuffer
 
 class Camera2Image(
-    private val image: Image
+    override val owner: WrapperOwner<Image>,
+    private val image: Image,
 ) : ImageWrapper<Image> {
     private var planeWrappers: Array<ImageWrapper.PlaneWrapper> = Array(3) { index ->
         val rawPlane = image.planes[index]
@@ -20,7 +21,7 @@ class Camera2Image(
     }
 
     override fun close() {
-        image.close()
+        owner.close(payload)
     }
 
     override val format: String

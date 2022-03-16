@@ -7,6 +7,7 @@ import net.rabbitknight.open.scanner.core.ScannerException
 import java.nio.ByteBuffer
 
 class BitmapImage(
+    override val owner: WrapperOwner<Bitmap>,
     private val bitmap: Bitmap,
     override val timestamp: Long,
 ) : ImageWrapper<Bitmap> {
@@ -41,6 +42,8 @@ class BitmapImage(
     override fun close() {
         // 释放以提升效率
         OpenScanner.sharedBufferPool.release(internalBuffer)
+
+        owner.close(bitmap)
     }
 
     override val format: String = bitmapFormat

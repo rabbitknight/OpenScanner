@@ -8,6 +8,11 @@ import java.nio.ByteBuffer
  */
 interface ImageWrapper<out T : Any> {
     /**
+     * 用来回收buffer
+     */
+    val owner: WrapperOwner<out T>
+
+    /**
      * Closes the underlying [android.media.Image].
      *
      * @see android.media.Image.close
@@ -74,4 +79,13 @@ interface ImageWrapper<out T : Any> {
          */
         val buffer: ByteBuffer
     }
+}
+
+/**
+ * ImageWrapper只是个包装类
+ * 不应该对payload做任何变更
+ * 当wrapper不再使用时，通知外面自行处理
+ */
+interface WrapperOwner<T : Any> {
+    fun close(payload: T)
 }
