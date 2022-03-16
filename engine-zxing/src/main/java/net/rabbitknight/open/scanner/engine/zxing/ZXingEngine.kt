@@ -1,6 +1,5 @@
 package net.rabbitknight.open.scanner.engine.zxing
 
-import android.graphics.ImageFormat
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import net.rabbitknight.open.scanner.core.C
@@ -8,6 +7,7 @@ import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
@@ -31,8 +31,16 @@ class ZXingEngine : Engine {
         zxingCore.setHints(hints)
     }
 
-    override fun decode(image: ImageWrapper): ImageResult {
-        val supports = listOf(C.Y8, ImageFormat.YV12, ImageFormat.YUV_420_888, ImageFormat.NV21)
+    override fun decode(image: ImageWrapper<Any>): ImageResult {
+        val supports = listOf(
+            ImageFormat.Y800,
+            ImageFormat.YV12,
+            ImageFormat.NV21,
+            ImageFormat.YUV_420_888
+        )
+        if (supports.all { image.format != it }) {
+            throw ScannerException("not support format ${image.format}")
+        }
         if (supports.all { image.format != it }) {
             throw ScannerException("not support format ${image.format}")
         }
@@ -59,6 +67,8 @@ class ZXingEngine : Engine {
         }
         return result
     }
+
+    override fun preferImageFormat(): String = ImageFormat.YV12
 
     private fun map(format: BarcodeFormat): com.google.zxing.BarcodeFormat? {
         return when (format) {

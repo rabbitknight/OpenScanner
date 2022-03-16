@@ -1,12 +1,11 @@
 package net.rabbitknight.open.scanner.core.image
 
-import android.graphics.ImageFormat
 import net.rabbitknight.open.scanner.core.ScannerException
 import java.nio.ByteBuffer
 
 class ByteArrayImage(
     private val byteArray: ByteArray,
-    override val format: Int,
+    override val format: String,
     override val width: Int,
     override val height: Int,
     override val timestamp: Long,

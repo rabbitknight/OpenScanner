@@ -16,14 +16,10 @@ interface ImageWrapper<out T : Any> {
 
     /**
      * Returns the image format.
-     *
-     *
-     *  The image format can be one of the [android.graphics.ImageFormat] or
-     * [android.graphics.PixelFormat] constants.
-     *
-     * @see android.media.Image.getFormat
+     * @see ImageFormat
      */
-    val format: Int
+    @ImageFormat.Format
+    val format: String
 
     /**
      * Returns the image width.

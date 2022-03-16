@@ -1,7 +1,7 @@
 package net.rabbitknight.open.scanner.core.utils
 
-import android.graphics.ImageFormat
 import net.rabbitknight.open.scanner.core.ScannerException
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.yuvutils.YuvUtils
@@ -11,7 +11,7 @@ object ImageUtils {
     /**
      * 将图像转化为YV12
      */
-    fun convertImageToYV12(input: ImageWrapper, dest: ByteArray): ImageWrapper {
+    fun convertImageToYV12(input: ImageWrapper<Any>, dest: ByteArray): ImageWrapper<Any> {
         val width = input.width
         val height = input.height
         val yLen = width * height
@@ -41,13 +41,13 @@ object ImageUtils {
      * 剪裁图像
      */
     fun cropImage(
-        input: ImageWrapper,
+        input: ImageWrapper<Any>,
         left: Int,
         top: Int,
         right: Int,
         bottom: Int,
         dest: ByteArray
-    ): ImageWrapper {
+    ): ImageWrapper<Any> {
         TODO()
     }
 }

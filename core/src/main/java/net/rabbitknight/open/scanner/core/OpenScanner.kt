@@ -6,6 +6,7 @@ import android.os.Looper
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.image.pool.ByteBufferPool
 import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.result.ImageResult
 
@@ -14,6 +15,11 @@ class OpenScanner private constructor(
     engines: Array<out Class<out Engine>>
 ) : Scanner {
     companion object {
+        /**
+         * 共享缓存池
+         */
+        val sharedBufferPool = ByteBufferPool()
+
         fun create(context: Context, vararg engines: Class<out Engine>): OpenScanner {
             return OpenScanner(context.applicationContext, engines)
         }

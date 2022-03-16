@@ -11,11 +11,11 @@ data class ImageFrame(
     /**
      * 原始数据
      */
-    val raw: ImageWrapper,
+    val raw: ImageWrapper<Any>,
     /**
      * 剪裁数据
      */
-    val cropImage: ImageWrapper,
+    val cropImage: ImageWrapper<Any>,
     /**
      * 建材矿
      */

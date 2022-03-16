@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.engine
 
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.ImageResult
 
@@ -30,5 +31,6 @@ interface Engine {
     /**
      * 倾向的图像格式
      */
-    fun preferImageFormat(): Int
+    @ImageFormat.Format
+    fun preferImageFormat(): String
 }

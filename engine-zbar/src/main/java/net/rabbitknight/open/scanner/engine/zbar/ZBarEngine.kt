@@ -1,12 +1,12 @@
 package net.rabbitknight.open.scanner.engine.zbar
 
-import android.graphics.ImageFormat
 import net.rabbitknight.open.scanner.core.C.CODE_FAIL
 import net.rabbitknight.open.scanner.core.C.CODE_SUCCESS
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
@@ -38,7 +38,7 @@ class ZBarEngine : Engine {
 
     override fun decode(image: ImageWrapper<Any>): ImageResult {
         val supports = listOf(
-            net.rabbitknight.open.scanner.core.C.Y8,
+            ImageFormat.Y800,
             ImageFormat.YV12,
             ImageFormat.NV21,
             ImageFormat.YUV_420_888
@@ -79,7 +79,7 @@ class ZBarEngine : Engine {
         }
     }
 
-    override fun preferImageFormat(): Int = ImageFormat.YV12
+    override fun preferImageFormat(): String = ImageFormat.YV12
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {

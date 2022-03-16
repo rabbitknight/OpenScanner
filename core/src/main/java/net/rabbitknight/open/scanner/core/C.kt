@@ -1,5 +1,7 @@
 package net.rabbitknight.open.scanner.core
 
+import net.rabbitknight.open.yuvutils.YuvUtils
+
 object C {
     const val CODE_SUCCESS = 0
     const val CODE_FAIL = -1

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.core.scanner.image
 
 import androidx.camera.core.ImageProxy
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import java.nio.ByteBuffer
 
@@ -19,8 +20,8 @@ class CameraXImage(
         image.close()
     }
 
-    override val format: Int
-        get() = image.format
+    override val format: String
+        get() = ImageFormat.A420
     override val height: Int
         get() = image.height
     override val width: Int

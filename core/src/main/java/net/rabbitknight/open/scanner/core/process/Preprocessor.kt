@@ -15,7 +15,7 @@ import java.util.concurrent.LinkedBlockingQueue
  */
 class Preprocessor(context: Context) : IModule {
     private lateinit var config: Config
-    private var source = LinkedBlockingQueue<ImageWrapper>()
+    private var source = LinkedBlockingQueue<ImageWrapper<Any>>()
     private var sink: BlockingQueue<ImageFrame>? = null
 
     override fun onConfig(config: Config) {
@@ -37,7 +37,7 @@ class Preprocessor(context: Context) : IModule {
         // TODO: 标记/输出到下游模块
     }
 
-    fun process(image: ImageWrapper): Boolean {
+    fun process(image: ImageWrapper<Any>): Boolean {
         val size = source.size
         if (size > config.inputCapacity) {
             return false

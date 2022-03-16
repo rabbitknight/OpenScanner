@@ -23,8 +23,8 @@ class Camera2Image(
         image.close()
     }
 
-    override val format: Int
-        get() = image.format
+    override val format: String
+        get() = ImageFormat.A420
     override val height: Int
         get() = image.height
     override val width: Int

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.image.pool
 
-import android.graphics.ImageFormat
+import net.rabbitknight.open.scanner.core.image.ImageFormat
+import net.rabbitknight.open.scanner.core.image.ImageFormat.Format
 import java.nio.ByteBuffer
 import java.util.*
 
@@ -24,7 +25,7 @@ class ByteBufferPool(private val maxSize: Long = 1024 * 1024 * 20) {
      * 获取一个buffer
      */
     @Synchronized
-    fun acquire(width: Int, height: Int, format: Int): ByteBuffer {
+    fun acquire(width: Int, height: Int, @Format format: String): ByteBuffer {
         val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
         val wantedSize = width * height * pixelSize
 
@@ -64,7 +65,7 @@ class ByteBufferPool(private val maxSize: Long = 1024 * 1024 * 20) {
 
     fun getLevel() = level
 
-    private fun get(width: Int, height: Int, format: Int): ByteBuffer {
+    private fun get(width: Int, height: Int, @Format format: String): ByteBuffer {
         val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
         val wantedSize = width * height * pixelSize
         return ByteBuffer.allocateDirect(wantedSize);
