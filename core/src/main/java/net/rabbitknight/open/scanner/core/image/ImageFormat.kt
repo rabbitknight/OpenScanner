@@ -23,7 +23,7 @@ object ImageFormat {
     const val RGB_565 = RGBP
     const val YUV_420_888 = A420
 
-    @StringDef(value = [Y800, I420, YV12, NV21, RGBA, ARGB, BGRA, A420])
+    @StringDef(value = [Y800, I420, YV12, NV21, RGBA, ARGB, BGRA, A420, RGBP])
     annotation class Format
 
     /**
@@ -40,6 +40,25 @@ object ImageFormat {
             BGRA -> 32
             A420 -> 24
             RGBP -> 16
+            else -> -1
+        }
+    }
+
+    /**
+     * 获取每个格式 占用的平面数量
+     * 注意: 平面数并不是和Pixel占用对其的，对于交错的格式，通常被归到同一个“交错”平面中去，而不是通过pixelOffset区分
+     */
+    fun getPlaneSize(@Format format: String): Int {
+        return when (format) {
+            Y800 -> 1
+            I420 -> 3
+            YV12 -> 3
+            NV21 -> 2
+            RGBA -> 1
+            ARGB -> 1
+            BGRA -> 1
+            A420 -> 3
+            RGBP -> 1
             else -> -1
         }
     }

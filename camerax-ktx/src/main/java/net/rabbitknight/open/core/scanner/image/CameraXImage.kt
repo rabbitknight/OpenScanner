@@ -10,13 +10,14 @@ class CameraXImage(
     override val owner: WrapperOwner<ImageProxy>,
     private val image: ImageProxy,
 ) : ImageWrapper<ImageProxy> {
-    private var planeWrappers: Array<ImageWrapper.PlaneWrapper> = Array(3) { index ->
-        val rawPlane = image.planes[index]
-        val rowStride = rawPlane.rowStride
-        val pixelStride = rawPlane.pixelStride
-        val buffer = rawPlane.buffer
-        Image2Plane(rowStride, pixelStride, buffer)
-    }
+
+    private var planeWrappers: Array<ImageWrapper.PlaneWrapper> =
+        image.planes.map { plane ->
+            val rowStride = plane.rowStride
+            val pixelStride = plane.pixelStride
+            val buffer = plane.buffer
+            Image2Plane(rowStride, pixelStride, buffer)
+        }.toTypedArray()
 
     override fun close() {
         owner.close(image)

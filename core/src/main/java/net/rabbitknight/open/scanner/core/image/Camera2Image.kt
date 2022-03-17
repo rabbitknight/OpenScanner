@@ -7,35 +7,28 @@ class Camera2Image(
     override val owner: WrapperOwner<Image>,
     private val image: Image,
 ) : ImageWrapper<Image> {
-    private var planeWrappers: Array<ImageWrapper.PlaneWrapper> = Array(3) { index ->
-        val rawPlane = image.planes[index]
-        val rowStride = rawPlane.rowStride
-        val pixelStride = rawPlane.pixelStride
-        val buffer = rawPlane.buffer
-        // 只应该是包装类
-//        val buffer = ByteBuffer.allocate(rawPlane.buffer.capacity()).also {
-//            it.put(rawPlane.buffer)
-//            it.flip()
-//        }
-        Image2Plane(rowStride, pixelStride, buffer)
-    }
+    private val imageWidth = image.width
+    private val imageHeight = image.height
+    private val imageTs = image.timestamp
+
+    private val planeWrappers: Array<ImageWrapper.PlaneWrapper> =
+        image.planes.map { plane ->
+            val rowStride = plane.rowStride
+            val pixelStride = plane.pixelStride
+            val buffer = plane.buffer
+            Image2Plane(rowStride, pixelStride, buffer)
+        }.toTypedArray()
 
     override fun close() {
         owner.close(payload)
     }
 
-    override val format: String
-        get() = ImageFormat.A420
-    override val height: Int
-        get() = image.height
-    override val width: Int
-        get() = image.width
-    override val planes: Array<ImageWrapper.PlaneWrapper>
-        get() = planeWrappers
-    override val payload: Image
-        get() = image
-    override val timestamp: Long
-        get() = image.timestamp
+    override val format: String = ImageFormat.A420
+    override val height: Int = imageHeight
+    override val width: Int = imageWidth
+    override val planes: Array<ImageWrapper.PlaneWrapper> = planeWrappers
+    override val payload: Image = image
+    override val timestamp: Long = imageTs
 
     internal class Image2Plane(
         override val rowStride: Int,
