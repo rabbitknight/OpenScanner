@@ -2,4 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.rabbitknight.open.scanner.core">
 
+    <application>
+        <provider
+            android:name=".ContextProvider"
+            android:authorities="net.rabbitknight.open.scanner.core.contextprovider"
+            android:exported="false" />
+    </application>
+
 </manifest>
