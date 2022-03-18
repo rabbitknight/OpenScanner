@@ -1,6 +1,5 @@
 package net.rabbitknight.open.scanner.core.impl
 
-import android.content.Context
 import android.os.Handler
 import net.rabbitknight.open.scanner.core.Scanner
 import net.rabbitknight.open.scanner.core.config.Config
@@ -12,11 +11,11 @@ import net.rabbitknight.open.scanner.core.process.Preprocessor
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.thread.CoreThread
 
-class ScannerImpl(context: Context, vararg engines: Class<out Engine>) : Scanner, Runnable {
+class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
     private val coreThread = CoreThread(this)
-    private val preprocessor: Preprocessor = Preprocessor(context)
-    private val engineModule = EngineModule(*engines)
-    private val postprocessor = Postprocessor(context)
+    private val preprocessor: Preprocessor = Preprocessor()
+    private val engineModule = EngineModule(engines)
+    private val postprocessor = Postprocessor()
     private val modules = listOf(coreThread, preprocessor, engineModule, postprocessor)
 
     init {

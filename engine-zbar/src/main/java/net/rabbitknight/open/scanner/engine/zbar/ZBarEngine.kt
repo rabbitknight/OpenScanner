@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.engine.zbar
 
+import android.content.Context
 import net.rabbitknight.open.scanner.core.C.CODE_FAIL
 import net.rabbitknight.open.scanner.core.C.CODE_SUCCESS
 import net.rabbitknight.open.scanner.core.ScannerException
@@ -17,12 +18,20 @@ import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
 import net.sourceforge.zbar.Symbol
 
-class ZBarEngine : Engine {
+class ZBarEngine() : Engine {
     private val zbarScanner = ImageScanner().also {
         this.setBarFormat(QR_CODE)
     }
     private var buffer = ByteArray(1024 * 1024 * 1)
     private var zbarImage = Image(ZBAR_FORMAT_Y800)
+
+    override fun init(context: Context) {
+
+    }
+
+    override fun release() {
+
+    }
 
     override fun supportBarFormat(format: BarcodeFormat): Boolean {
         return map(format) != null
@@ -79,7 +88,7 @@ class ZBarEngine : Engine {
         }
     }
 
-    override fun preferImageFormat(): String = ImageFormat.YV12
+    override fun preferImageFormat(): String = ImageFormat.Y800
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {

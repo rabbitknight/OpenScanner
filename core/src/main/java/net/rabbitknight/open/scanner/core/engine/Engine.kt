@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.core.engine
 
+import android.content.Context
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
@@ -13,6 +14,11 @@ import net.rabbitknight.open.scanner.core.result.ImageResult
  * 3. 需要告知倾向使用的图像格式
  */
 interface Engine {
+
+    fun init(context: Context)
+
+    fun release()
+
     /**
      * 是否引擎支持format
      */

@@ -15,16 +15,22 @@ import net.rabbitknight.open.scanner.core.result.Rect
  * 从OpenCV WeChatQrcode移植
  * 只支持qrcode
  */
-class WeChatEngine(val context: Context) : Engine {
+class WeChatEngine : Engine {
     private var enable = true
     private var buffer = ByteArray(1024 * 1024 * 1)
 
-    init {
-        AssetsLoader.load(context, "wechat_qrcode")
-    }
 
     // 必须在load之后调用
-    private val qrcodeEngine = WeChatQRCode()
+    private lateinit var qrcodeEngine: WeChatQRCode
+
+    override fun init(context: Context) {
+        AssetsLoader.load(context, "wechat_qrcode")
+        qrcodeEngine = WeChatQRCode()
+    }
+
+    override fun release() {
+        qrcodeEngine.release()
+    }
 
     override fun supportBarFormat(format: BarcodeFormat): Boolean =
         format == BarcodeFormat.QR_CODE
@@ -76,7 +82,7 @@ class WeChatEngine(val context: Context) : Engine {
         }
     }
 
-    override fun preferImageFormat(): String = ImageFormat.YV12
+    override fun preferImageFormat(): String = ImageFormat.Y800
 
     private fun ImageWrapper.PlaneWrapper.toByteArray(out: ByteArray, width: Int, height: Int) {
         buffer.rewind()

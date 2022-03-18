@@ -1,13 +1,12 @@
 package net.rabbitknight.open.scanner.core.process
 
-import android.content.Context
 import android.os.Handler
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import java.util.concurrent.LinkedBlockingQueue
 
-class Postprocessor(context: Context) : IModule {
+class Postprocessor() : IModule {
     private var resultListener: Pair<Handler?, (ImageResult) -> Unit>? = null
     private val source = LinkedBlockingQueue<ImageFrame>()
 

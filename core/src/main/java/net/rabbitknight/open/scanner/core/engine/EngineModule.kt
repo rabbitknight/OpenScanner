@@ -6,7 +6,7 @@ import net.rabbitknight.open.scanner.core.process.ImageFrame
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
-class EngineModule(vararg engines: Class<out Engine>) : IModule {
+class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
     private val source = LinkedBlockingQueue<ImageFrame>()
     private var sink: BlockingQueue<ImageFrame>? = null
 

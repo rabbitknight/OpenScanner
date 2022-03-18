@@ -1,6 +1,5 @@
 package net.rabbitknight.open.scanner.core.process
 
-import android.content.Context
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
@@ -13,7 +12,7 @@ import java.util.concurrent.LinkedBlockingQueue
  * + 对原始的数据进行处理 处理成[net.rabbitknight.open.scanner.core.C.Y8]的数据
  * + 根据晃动检测模块的开关 判断是否处理图像
  */
-class Preprocessor(context: Context) : IModule {
+class Preprocessor() : IModule {
     private lateinit var config: Config
     private var source = LinkedBlockingQueue<ImageWrapper<Any>>()
     private var sink: BlockingQueue<ImageFrame>? = null

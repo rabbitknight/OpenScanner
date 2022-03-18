@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.engine.zxing
 
+import android.content.Context
 import com.google.zxing.*
 import com.google.zxing.common.HybridBinarizer
 import net.rabbitknight.open.scanner.core.C
@@ -14,11 +15,18 @@ import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
 import java.lang.Math.min
 
-class ZXingEngine : Engine {
-    // TODO: shared buffer
+class ZXingEngine() : Engine {
     private var buffer = ByteArray(1024 * 1024 * 1)
     private val zxingCore = MultiFormatReader().also {
         this.setBarFormat(QR_CODE)
+    }
+
+    override fun init(context: Context) {
+
+    }
+
+    override fun release() {
+
     }
 
     override fun supportBarFormat(format: BarcodeFormat): Boolean {
@@ -68,7 +76,7 @@ class ZXingEngine : Engine {
         return result
     }
 
-    override fun preferImageFormat(): String = ImageFormat.YV12
+    override fun preferImageFormat(): String = ImageFormat.Y800
 
     private fun map(format: BarcodeFormat): com.google.zxing.BarcodeFormat? {
         return when (format) {
