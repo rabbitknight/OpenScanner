@@ -32,9 +32,9 @@ object ImageFormat {
     fun getBitsPerPixel(@Format format: String): Int {
         return when (format) {
             Y800 -> 8
-            I420 -> 24
-            YV12 -> 24
-            NV21 -> 24
+            I420 -> 12
+            YV12 -> 12
+            NV21 -> 12
             RGBA -> 32
             ARGB -> 32
             BGRA -> 32
