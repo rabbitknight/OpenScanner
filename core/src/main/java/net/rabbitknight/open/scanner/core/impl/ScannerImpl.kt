@@ -19,8 +19,12 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
     private val modules = listOf(coreThread, preprocessor, engineModule, postprocessor)
 
     init {
+        // 流串联
         preprocessor.setSink(engineModule.getSource())
         engineModule.setSink(postprocessor.getSource())
+
+        // 模块启动
+        modules.forEach { it.onStart() }
     }
 
     override fun setConfig(config: Config) {
@@ -34,11 +38,7 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
     override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) =
         postprocessor.getOutput(handler, callback)
 
-    override fun start() {
-        modules.forEach { it.onStart() }
-    }
-
-    override fun stop() {
+    override fun release() {
         modules.forEach { it.onStop() }
     }
 

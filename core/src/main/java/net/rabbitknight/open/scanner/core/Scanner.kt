@@ -22,12 +22,8 @@ interface Scanner {
     fun getResult(handler: Handler? = null, callback: (ImageResult) -> Unit)
 
     /**
-     * 开始检测
+     * 释放扫描器
+     * 一旦调用该方法则认为扫描器不应再被使用
      */
-    fun start()
-
-    /**
-     * 结束检测
-     */
-    fun stop()
+    fun release()
 }

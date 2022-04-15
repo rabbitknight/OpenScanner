@@ -1,6 +1,5 @@
 package net.rabbitknight.open.scanner.core
 
-import android.content.Context
 import android.os.Handler
 import android.os.Looper
 import net.rabbitknight.open.scanner.core.config.Config
@@ -11,8 +10,7 @@ import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.result.ImageResult
 
 class OpenScanner private constructor(
-    context: Context,
-    engines: Array<out Class<out Engine>>
+    engines: Array<Class<out Engine>>
 ) : Scanner {
     companion object {
         /**
@@ -20,14 +18,14 @@ class OpenScanner private constructor(
          */
         val sharedBufferPool = ByteBufferPool()
 
-        fun create(context: Context, vararg engines: Class<out Engine>): OpenScanner {
-            return OpenScanner(context.applicationContext, engines)
+        fun create(engines: Array<Class<out Engine>>): OpenScanner {
+            return OpenScanner(engines)
         }
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val scannerImpl = ScannerImpl(context, *engines)
+    private val scannerImpl = ScannerImpl(engines)
 
     /**
      * 配置
@@ -49,18 +47,8 @@ class OpenScanner private constructor(
         scannerImpl.getResult(handler ?: mainHandler, callback)
     }
 
-    /**
-     * 开始检测
-     */
-    override fun start() {
-        mainHandler.post { scannerImpl.start() }
-    }
-
-    /**
-     * 结束检测
-     */
-    override fun stop() {
-        mainHandler.post { scannerImpl.stop() }
+    override fun release() {
+        mainHandler.post { scannerImpl.release() }
     }
 
 }
