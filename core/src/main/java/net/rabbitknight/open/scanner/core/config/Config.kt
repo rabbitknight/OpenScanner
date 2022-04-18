@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.core.config
 
+import androidx.annotation.FloatRange
 import net.rabbitknight.open.scanner.core.C.DEFAULT_INPUT_CAPACITY
 import net.rabbitknight.open.scanner.core.C.DEFAULT_SHAKE_DETECTOR_ENABLE
 import net.rabbitknight.open.scanner.core.result.RectF
@@ -12,6 +13,7 @@ data class Config(
     /**
      * 取景器扩大倍数
      */
+    @FloatRange(from = 0.0, to = 1.0)
     val finderTolerance: Float,
 
     /**

@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.core.process
 
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
@@ -17,9 +18,14 @@ data class ImageFrame(
      */
     val cropImage: ImageWrapper<Any>,
     /**
-     * 建材矿
+     * 剪裁框
      */
     val cropRect: Rect,
+
+    /**
+     * 格式转换
+     */
+    val cvtImage: Map<@ImageFormat.Format String, ImageWrapper<Any>> = emptyMap(),
     /**
      * 处理后的兴趣区域
      */

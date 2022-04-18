@@ -10,16 +10,16 @@ fun ByteArray.wrap(
     width: Int,
     height: Int,
     timestamp: Long
-): ImageWrapper<Any> =
+): ImageWrapper<ByteArray> =
     ByteArrayImage(owner, this, format, width, height, timestamp)
 
 fun Image.wrap(
     owner: WrapperOwner<Image>
-): ImageWrapper<Any> =
+): ImageWrapper<Image> =
     Camera2Image(owner, this)
 
 fun Bitmap.wrap(
     owner: WrapperOwner<Bitmap>,
     timestamp: Long
-): ImageWrapper<Any> =
+): ImageWrapper<Bitmap> =
     BitmapImage(owner, this, timestamp)

@@ -6,5 +6,5 @@ import net.rabbitknight.open.scanner.core.image.WrapperOwner
 
 fun ImageProxy.wrap(
     owner: WrapperOwner<ImageProxy>
-): ImageWrapper<Any> =
+): ImageWrapper<ImageProxy> =
     CameraXImage(owner, this)

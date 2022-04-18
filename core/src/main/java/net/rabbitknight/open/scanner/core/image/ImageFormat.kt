@@ -23,6 +23,12 @@ object ImageFormat {
     const val RGB_565 = RGBP
     const val YUV_420_888 = A420
 
+    @Target(
+        AnnotationTarget.PROPERTY,
+        AnnotationTarget.VALUE_PARAMETER,
+        AnnotationTarget.FUNCTION,
+        AnnotationTarget.TYPE
+    )
     @StringDef(value = [Y800, I420, YV12, NV21, RGBA, ARGB, BGRA, A420, RGBP])
     annotation class Format
 
@@ -60,6 +66,20 @@ object ImageFormat {
             A420 -> 3
             RGBP -> 1
             else -> -1
+        }
+    }
+
+    /**
+     * 是否是yuv数据
+     */
+    fun isYUV(@Format format: String): Boolean {
+        return when (format) {
+            Y800 -> true
+            I420 -> true
+            YV12 -> true
+            NV21 -> true
+            A420 -> true
+            else -> false
         }
     }
 }

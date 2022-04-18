@@ -93,11 +93,17 @@ public class YuvUtils {
                                            int srcWidth, int srcHeight,
                                            int rotate, int format);
 
-    public native static int yuvConvertToARGB(byte[] src, int offset, int length,
-                                              byte[] dst, int dstOffset, int dstStride,
-                                              int left, int top, int cropWidth, int cropHeight,
-                                              int srcWidth, int srcHeight,
-                                              int rotate, int format);
+    public native static int convertToARGB(byte[] src, int offset, int length,
+                                           byte[] dst, int dstOffset, int dstStride,
+                                           int left, int top, int cropWidth, int cropHeight,
+                                           int srcWidth, int srcHeight,
+                                           int rotate, int format);
+
+    public native static int convertToARGB(ByteBuffer src, int length,
+                                           byte[] dst, int dstOffset, int dstStride,
+                                           int left, int top, int cropWidth, int cropHeight,
+                                           int srcWidth, int srcHeight,
+                                           int rotate, int format);
 
     public native static int convertI420ToARGB(byte[] srcY, int srcOffsetY, int srcStrideY,
                                                byte[] srcU, int srcOffsetU, int srcStrideU,

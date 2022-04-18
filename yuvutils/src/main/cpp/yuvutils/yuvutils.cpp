@@ -336,7 +336,7 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_convertToI420__Ljava_nio_ByteBuffer
 
 extern "C"
 JNIEXPORT jint JNICALL
-Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToARGB(
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertToARGB___3BII_3BIIIIIIIIII(
         JNIEnv *env, jclass clazz,
         jbyteArray src, jint offset, jint length,
         jbyteArray dst, jint dst_offset, jint dst_stride,
@@ -354,6 +354,27 @@ Java_net_rabbitknight_open_yuvutils_YuvUtils_yuvConvertToARGB(
                                     rotationMode, format);
 
     env->ReleaseByteArrayElements(src, (jbyte *) src_frame, 0);
+    env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
+    return rst;
+}
+
+extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_yuvutils_YuvUtils_convertToARGB__Ljava_nio_ByteBuffer_2I_3BIIIIIIIIII(
+        JNIEnv *env, jclass clazz, jobject src, jint length, jbyteArray dst, jint dst_offset,
+        jint dst_stride, jint left, jint top, jint crop_width, jint crop_height, jint src_width,
+        jint src_height, jint rotate, jint format) {
+
+    auto *src_frame = (uint8_t *) env->GetDirectBufferAddress(src);
+    auto *dst_argb = (uint8_t *) env->GetByteArrayElements(dst, NULL);
+
+    auto rotationMode = static_cast<libyuv::RotationMode>(rotate);
+
+    int rst = libyuv::ConvertToARGB(src_frame, length,
+                                    dst_argb + dst_offset, dst_stride,
+                                    left, top, src_width, src_height, crop_width, crop_height,
+                                    rotationMode, format);
+
     env->ReleaseByteArrayElements(dst, (jbyte *) dst_argb, 0);
     return rst;
 }

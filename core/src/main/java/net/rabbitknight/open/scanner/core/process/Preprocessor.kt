@@ -3,6 +3,9 @@ package net.rabbitknight.open.scanner.core.process
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.lifecycle.IModule
+import net.rabbitknight.open.scanner.core.result.RectF
+import net.rabbitknight.open.scanner.core.result.centerX
+import net.rabbitknight.open.scanner.core.result.centerY
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 
@@ -15,7 +18,7 @@ import java.util.concurrent.LinkedBlockingQueue
 class Preprocessor() : IModule {
     private lateinit var config: Config
     private var source = LinkedBlockingQueue<ImageWrapper<Any>>()
-    private var sink: BlockingQueue<ImageFrame>? = null
+    private lateinit var sink: BlockingQueue<ImageFrame>
 
     override fun onConfig(config: Config) {
         this.config = config
@@ -28,12 +31,30 @@ class Preprocessor() : IModule {
     }
 
     override fun onStep() {
-        // TODO: 晃动检测
         val nextImage = source.poll()
-        // TODO: 根据取景框剪裁
-        // TODO: 二维码检测
-        // TODO: camera 协作器
-        // TODO: 标记/输出到下游模块
+        nextImage ?: return
+
+        val config = this.config
+        // 计算剪裁
+        val finderRect = config.finderRect
+        val finderTolerance = config.finderTolerance
+        val cropRect: RectF = let {
+            val centerX = finderRect.centerX()
+            val centerY = finderRect.centerY()
+            val halfWidth = (finderRect.right - finderRect.left) * (1 + finderTolerance) / 2
+            val halfHeight = (finderRect.bottom - finderRect.top) * (1 + finderTolerance) / 2
+            val crop = RectF(
+                (centerX - halfWidth).coerceAtLeast(0.0f),
+                (centerY - halfHeight).coerceAtLeast(0.0f),
+                (centerX + halfWidth).coerceAtMost(1.0f),
+                (centerY + halfHeight).coerceAtMost(1.0f)
+            )
+            crop
+        }
+// todo
+//        val frame = ImageFrame(
+//            nextImage,
+//            )
     }
 
     fun process(image: ImageWrapper<Any>): Boolean {
