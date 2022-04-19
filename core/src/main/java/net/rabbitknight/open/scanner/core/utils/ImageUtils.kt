@@ -50,7 +50,7 @@ object ImageUtils {
     fun cropImage(
         input: ImageWrapper<Any>,
         owner: WrapperOwner<ByteArray>,
-        left: Int, top: Int, right: Int, bottom: Int,
+        left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
     ): ImageWrapper<ByteArray> {
         when (input.payload) {
@@ -58,7 +58,7 @@ object ImageUtils {
             is BitmapImage -> {
                 return cropBitmapImage(
                     input as ImageWrapper<BitmapImage>,
-                    owner, left, top, right, bottom, dest
+                    owner, left, top, cropWidth, cropHeight, dest
                 )
             }
             // bytearray类型数据
@@ -66,16 +66,16 @@ object ImageUtils {
                 return if (ImageFormat.isYUV(input.format))
                     cropYUVByteArrayImage(
                         input as ImageWrapper<ByteArray>,
-                        owner, left, top, right, bottom, dest
+                        owner, left, top, cropWidth, cropHeight, dest
                     )
                 else cropRGBByteArrayImage(
                     input as ImageWrapper<ByteArray>,
-                    owner, left, top, right, bottom, dest
+                    owner, left, top, cropWidth, cropHeight, dest
                 )
             }
             // 其他类型，固定为Camera2或CameraX 都是YUV_420_888
             else -> {
-                return cropCamera2Image(input, owner, left, top, right, bottom, dest)
+                return cropCamera2Image(input, owner, left, top, cropWidth, cropHeight, dest)
             }
         }
     }
@@ -88,12 +88,10 @@ object ImageUtils {
     private fun cropBitmapImage(
         input: ImageWrapper<BitmapImage>,
         owner: WrapperOwner<ByteArray>,
-        left: Int, top: Int, right: Int, bottom: Int,
+        left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
     ): ImageWrapper<ByteArray> {
         val plane = input.planes[0]
-        val cropWidth = right - left
-        val cropHeight = bottom - top
         val format = YuvUtils.fourcc(input.format)
         val rst = YuvUtils.convertToARGB(
             plane.buffer, plane.buffer.limit(),
@@ -116,11 +114,9 @@ object ImageUtils {
     private fun cropRGBByteArrayImage(
         input: ImageWrapper<ByteArray>,
         owner: WrapperOwner<ByteArray>,
-        left: Int, top: Int, right: Int, bottom: Int,
+        left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
     ): ImageWrapper<ByteArray> {
-        val cropWidth = right - left
-        val cropHeight = bottom - top
         val format = YuvUtils.fourcc(input.format)
         val raw = input.payload
         val rst = YuvUtils.convertToARGB(
@@ -141,11 +137,9 @@ object ImageUtils {
     private fun cropYUVByteArrayImage(
         input: ImageWrapper<ByteArray>,
         owner: WrapperOwner<ByteArray>,
-        left: Int, top: Int, right: Int, bottom: Int,
+        left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
     ): ImageWrapper<ByteArray> {
-        val cropWidth = right - left
-        val cropHeight = bottom - top
         val format = YuvUtils.fourcc(input.format)
         val raw = input.payload
         val yLen = cropWidth * cropHeight
@@ -170,7 +164,7 @@ object ImageUtils {
     private fun cropCamera2Image(
         input: ImageWrapper<Any>,
         owner: WrapperOwner<ByteArray>,
-        left: Int, top: Int, right: Int, bottom: Int,
+        left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
     ): ImageWrapper<ByteArray> {
         if (input.format != ImageFormat.YUV_420_888) {
@@ -208,8 +202,6 @@ object ImageUtils {
         )
 
         // 剪裁
-        val cropWidth = right - left
-        val cropHeight = bottom - top
         val cropYLen = cropWidth * cropHeight
         val cropULen = cropWidth / 2 * cropHeight / 2
         val format = YuvUtils.fourcc(ImageFormat.I420)
