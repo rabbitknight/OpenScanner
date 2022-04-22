@@ -18,6 +18,14 @@ fun Rect.centerX() = (this.left + this.right) / 2
 
 fun Rect.centerY() = (this.top + this.bottom) / 2
 
+fun Rect.width() = this.right - this.left
+
+fun Rect.height() = this.bottom - this.top
+
 fun RectF.centerX() = (this.left + this.right) / 2
 
 fun RectF.centerY() = (this.top + this.bottom) / 2
+
+fun RectF.width() = this.right - this.left
+
+fun RectF.height() = this.bottom - this.top

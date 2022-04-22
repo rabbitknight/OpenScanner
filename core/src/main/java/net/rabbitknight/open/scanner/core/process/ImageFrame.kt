@@ -2,7 +2,7 @@ package net.rabbitknight.open.scanner.core.process
 
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
-import net.rabbitknight.open.scanner.core.result.ImageResult
+import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.Rect
 
 /**
@@ -25,14 +25,14 @@ data class ImageFrame(
     /**
      * 格式转换
      */
-    val cvtImage: Map<@ImageFormat.Format String, ImageWrapper<Any>> = emptyMap(),
+    val cvtImage: MutableMap<@ImageFormat.Format String, ImageWrapper<Any>> = mutableMapOf(),
     /**
      * 处理后的兴趣区域
      */
-    val rois: List<Rect>,
+    val rois: MutableList<Rect> = mutableListOf(),
 
     /**
      * 该帧检测结果
      */
-    val result: ImageResult?,
+    val result: MutableList<BarcodeResult> = mutableListOf(),
 )
