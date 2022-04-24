@@ -82,7 +82,7 @@ class WeChatEngine : Engine {
         }
     }
 
-    override fun preferImageFormat(): String = ImageFormat.Y800
+    override fun preferImageFormat(): String = ImageFormat.YV12
 
     private fun ImageWrapper.PlaneWrapper.toByteArray(out: ByteArray, width: Int, height: Int) {
         buffer.rewind()

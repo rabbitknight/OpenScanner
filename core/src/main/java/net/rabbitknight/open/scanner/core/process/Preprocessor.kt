@@ -12,9 +12,13 @@ import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * 预处理引擎
- * + 根据取景框的配置 对图像数据进行剪裁
- * + 对原始的数据进行处理 处理成[net.rabbitknight.open.scanner.core.C.Y8]的数据
- * + 根据晃动检测模块的开关 判断是否处理图像
+ * 根据取景框的配置 对图像数据进行剪裁
+ * 将所有输入的乱七八糟的图形格式，转换为ByteArray格式，规则如下
+ *  + Bitmap -> ARGB
+ *  + RGBA -> ARGB
+ *  + YUV_420 -> YV12
+ *  + NV21 -> YV12
+ * 根据晃动检测模块的开关 判断是否处理图像
  */
 class Preprocessor() : IModule {
     private lateinit var config: Config

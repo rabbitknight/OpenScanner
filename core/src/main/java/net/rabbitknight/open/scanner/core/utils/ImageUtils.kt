@@ -12,6 +12,54 @@ object ImageUtils {
     private val bufferPool = ByteArrayPool()
 
     /**
+     * 将ByteArray数据转换为ARGB
+     */
+    fun convertByteArrayToARGB(
+        owner: WrapperOwner<ByteArray>,
+        input: ImageWrapper<ByteArray>,
+        dest: ByteArray
+    ): ImageWrapper<ByteArray> {
+        val format = YuvUtils.fourcc(input.format)
+        val rst = YuvUtils.convertToARGB(
+            input.payload, 0, input.payload.size,
+            dest, 0, input.width, 0, 0, input.width, input.height,
+            input.width, input.height, 0, format
+        )
+        if (rst != 0) {
+            Log.w(TAG, "convertByteArrayToARGB: ${input},fail [${rst}]")
+        }
+        return dest.wrap(owner, ImageFormat.ARGB, input.width, input.height, input.timestamp)
+    }
+
+    /**
+     * 将ByteArray数据转换为YV12
+     */
+    fun convertByteArrayToYV12(
+        owner: WrapperOwner<ByteArray>,
+        input: ImageWrapper<ByteArray>,
+        dest: ByteArray
+    ): ImageWrapper<ByteArray> {
+        val format = YuvUtils.fourcc(input.format)
+        val width = input.width
+        val height = input.height
+        val yLen = width * height
+        val uLen = width / 2 * height / 2
+        val vLen = width / 2 * height / 2
+        val rst = YuvUtils.convertToI420(
+            input.payload, 0, input.payload.size,
+            dest, 0, width,
+            dest, yLen + uLen, width / 2,
+            dest, yLen, width / 2,
+            0, 0, width, height,
+            width, height, 0, format
+        )
+        if (rst != 0) {
+            Log.w(TAG, "convertByteArrayToYV12: ${input},fail [${rst}]")
+        }
+        return dest.wrap(owner, ImageFormat.YV12, input.width, input.height, input.timestamp)
+    }
+
+    /**
      * 将图像转化为YV12
      */
     fun convertImageToYV12(

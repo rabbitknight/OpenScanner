@@ -16,7 +16,7 @@ data class ImageFrame(
     /**
      * 剪裁数据
      */
-    val cropImage: ImageWrapper<Any>,
+    val cropImage: ImageWrapper<ByteArray>,
     /**
      * 剪裁框
      */

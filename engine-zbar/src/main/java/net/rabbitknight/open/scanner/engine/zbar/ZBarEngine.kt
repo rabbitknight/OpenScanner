@@ -88,7 +88,7 @@ class ZBarEngine() : Engine {
         }
     }
 
-    override fun preferImageFormat(): String = ImageFormat.Y800
+    override fun preferImageFormat(): String = ImageFormat.YV12
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {
