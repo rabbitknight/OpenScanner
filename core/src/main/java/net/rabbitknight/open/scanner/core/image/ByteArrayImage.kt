@@ -52,15 +52,15 @@ class ByteArrayImage(
         buffer.position(0)
         buffer.put(byteArray, 0, yLen + uLen + vLen)
 
-        val planeY = ByteArrayPlane(width, 0, let {
+        val planeY = ByteArrayPlane(width, 1, let {
             buffer.position(0)
             buffer.slice().apply { limit(yLen) }
         })
-        val planeV = ByteArrayPlane(width / 2, 0, let {
+        val planeV = ByteArrayPlane(width / 2, 1, let {
             buffer.position(yLen)
             buffer.slice().apply { limit(vLen) }
         })
-        val planeU = ByteArrayPlane(width / 2, 0, let {
+        val planeU = ByteArrayPlane(width / 2, 1, let {
             buffer.position(yLen + vLen)
             buffer.slice().apply { limit(uLen) }
         })
@@ -89,11 +89,11 @@ class ByteArrayImage(
         buffer.position(0)
         buffer.put(byteArray, 0, yLen + uvLen)
 
-        val planeY = ByteArrayPlane(width, 0, let {
+        val planeY = ByteArrayPlane(width, 1, let {
             buffer.position(0)
             buffer.slice().apply { limit(yLen) }
         })
-        val planeUV = ByteArrayPlane(width, 1, let {
+        val planeUV = ByteArrayPlane(width, 2, let {
             buffer.position(yLen)
             buffer.slice().apply { limit(uvLen) }
         })
