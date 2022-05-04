@@ -42,7 +42,6 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
     override fun onStop() {
         engineImpls.forEach {
             val impl = it.value
-
             impl.release()
         }
         engineImpls.clear()
@@ -52,6 +51,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
         val imageFrame = source.take()
         val config = this.config
 
+        // 解码
         val decode: (Map.Entry<Class<out Engine>, Engine>) -> Boolean = {
             val engine = it.value
             val clazz = it.key
@@ -64,12 +64,8 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
             // 引擎解码
             val imageResult = engine.decode(image)
 
-            // 解码成功
-            if (imageResult.code == C.CODE_SUCCESS) {
-                // TODO:  
-            } else {
-
-            }
+            // 添加全部结果
+            imageFrame.result.add(imageResult)
 
             // lambda返回值
             imageResult.code == C.CODE_SUCCESS
@@ -80,9 +76,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
             engineImpls.any(decode)
         }
 
-        // 图像转换
-        // 检测
-        // 识别
+        sink?.offer(imageFrame)
     }
 
     fun getSource(): BlockingQueue<ImageFrame> = source

@@ -36,7 +36,7 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
     }
 
     override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) =
-        postprocessor.getOutput(handler, callback)
+        postprocessor.getOutput(handler!!, callback)
 
     override fun release() {
         modules.forEach { it.onStop() }

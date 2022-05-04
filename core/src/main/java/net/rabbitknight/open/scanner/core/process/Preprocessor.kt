@@ -42,21 +42,20 @@ class Preprocessor() : IModule {
         nextImage ?: return
 
         val config = this.config
-        // 计算剪裁
+
+        // 计算剪裁区域，只有在剪裁区域的图像才是需要被剪裁的
         val finderRect = config.finderRect
         val finderTolerance = config.finderTolerance
-        val cropRect: Rect = let {
-            val imageWidth = nextImage.width
-            val imageHeight = nextImage.height
+        val cropRect: Rect = finderRect.let {
             val centerX = finderRect.centerX()
             val centerY = finderRect.centerY()
-            val halfWidth = (finderRect.right - finderRect.left) * (1 + finderTolerance) / 2
-            val halfHeight = (finderRect.bottom - finderRect.top) * (1 + finderTolerance) / 2
+            val halfWidth = finderRect.width() * (1 + finderTolerance) / 2
+            val halfHeight = finderRect.height() * (1 + finderTolerance) / 2
             val crop = Rect(
-                ((centerX - halfWidth).coerceAtLeast(0.0f) * imageWidth).toInt(),
-                ((centerY - halfHeight).coerceAtLeast(0.0f) * imageHeight).toInt(),
-                ((centerX + halfWidth).coerceAtMost(1.0f) * imageWidth).toInt(),
-                ((centerY + halfHeight).coerceAtMost(1.0f) * imageHeight).toInt()
+                ((centerX - halfWidth).coerceAtLeast(0.0f) * nextImage.width).toInt(),
+                ((centerY - halfHeight).coerceAtLeast(0.0f) * nextImage.height).toInt(),
+                ((centerX + halfWidth).coerceAtMost(1.0f) * nextImage.width).toInt(),
+                ((centerY + halfHeight).coerceAtMost(1.0f) * nextImage.height).toInt()
             )
             crop
         }
@@ -70,7 +69,7 @@ class Preprocessor() : IModule {
         )
         // 封装imageFrame
         val imageFrame = ImageFrame(
-            nextImage, cropImage, cropRect,
+            nextImage, cropImage, cropRect, nextImage.timestamp
         )
         // 输出
         sink.offer(imageFrame)
