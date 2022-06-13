@@ -30,7 +30,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
         this.config = config
     }
 
-    override fun onStart() {
+    override fun onInit() {
         engines.forEach {
             val impl = it.newInstance()
             engineImpls[it] = impl
@@ -39,7 +39,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
         }
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
         engineImpls.forEach {
             val impl = it.value
             impl.release()

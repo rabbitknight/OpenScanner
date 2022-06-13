@@ -14,7 +14,7 @@ import kotlin.math.min
  * 后处理
  * 1. 检测结果是否复合
  */
-class Postprocessor() : IModule {
+class OutputProcessor() : IModule {
     private var resultListener: Pair<Handler, (ImageResult) -> Unit>? = null
     private val source = LinkedBlockingQueue<ImageFrame>()
 
@@ -27,10 +27,10 @@ class Postprocessor() : IModule {
     override fun onConfig(config: Config) {
     }
 
-    override fun onStart() {
+    override fun onInit() {
     }
 
-    override fun onStop() {
+    override fun onDestroy() {
 
     }
 
@@ -51,7 +51,7 @@ class Postprocessor() : IModule {
             val index = mergeResults.indexOfFirst {
                 it.format == result.format  // 格式相同
                     && it.payload == result.payload // 结果相同
-                    && cross(it.rect, result.rect)  // 兴趣框相交
+                    && cross(it.rect, result.rect)  // roi框相交
             }
             // 如果可以找到 则合并结果
             if (index != -1) {
@@ -93,6 +93,10 @@ class Postprocessor() : IModule {
             }
         }
         // todo 焦距
+    }
+
+    private fun processResult(imageFrame: ImageFrame,){
+
     }
 
     /**

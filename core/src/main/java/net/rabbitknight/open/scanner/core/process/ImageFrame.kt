@@ -1,7 +1,9 @@
 package net.rabbitknight.open.scanner.core.process
 
+import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
 
@@ -16,7 +18,7 @@ data class ImageFrame(
     /**
      * 剪裁数据
      */
-    val cropImage: ImageWrapper<ByteArray>,
+    var cropImage: ImageWrapper<ByteArray> = NullImageWrapper,
     /**
      * 剪裁框
      */
@@ -41,3 +43,26 @@ data class ImageFrame(
      */
     val result: MutableList<ImageResult> = mutableListOf(),
 )
+
+
+object NullImageWrapper : ImageWrapper<ByteArray> {
+    override val owner: WrapperOwner<out ByteArray>
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val format: String
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val width: Int
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val height: Int
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val timestamp: Long
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val planes: Array<ImageWrapper.PlaneWrapper>
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+    override val payload: ByteArray
+        get() = throw ScannerException("NullImageWrapper:BOOM!")
+
+    override fun close() {
+        // no-op
+    }
+
+}

@@ -1,6 +1,8 @@
 package net.rabbitknight.open.scanner.core
 
 object C {
+    const val TAG = "Scanner"
+
     const val CODE_SUCCESS = 0
     const val CODE_FAIL = -1
 
@@ -18,6 +20,11 @@ object C {
      * 默认晃动检测
      */
     const val DEFAULT_SHAKE_DETECTOR_ENABLE = false
+
+    /**
+     * 默认 相机 像素
+     */
+    const val DEFAULT_COORDINATOR_ROI_SIZE = 100
 
 
     /**

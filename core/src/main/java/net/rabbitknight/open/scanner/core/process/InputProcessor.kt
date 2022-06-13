@@ -4,11 +4,9 @@ import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
-import net.rabbitknight.open.scanner.core.lifecycle.IModule
+import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.*
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * 预处理引擎
@@ -20,45 +18,48 @@ import java.util.concurrent.LinkedBlockingQueue
  *  + NV21 -> YV12
  * 根据晃动检测模块的开关 判断是否处理图像
  */
-class Preprocessor() : IModule {
+class InputProcessor() : BaseModule() {
     private lateinit var config: Config
-    private var source = LinkedBlockingQueue<ImageWrapper<Any>>()
-    private lateinit var sink: BlockingQueue<ImageFrame>
-
     private val byteArrayCache = ByteArrayPool()
 
     override fun onConfig(config: Config) {
         this.config = config
     }
 
-    override fun onStart() {
-    }
-
-    override fun onStop() {
-    }
-
-    override fun onStep() {
-        val nextImage = source.take()
-        nextImage ?: return
-
+    fun process(image: ImageWrapper<Any>): Boolean {
         val config = this.config
+
+        val size = getSource().size
+        if (size > config.inputCapacity) {
+            return false
+        }
 
         // 计算剪裁区域，只有在剪裁区域的图像才是需要被剪裁的
         val finderRect = config.finderRect
         val finderTolerance = config.finderTolerance
-        val cropRect: Rect = finderRect.let {
+        val cropRect = finderRect.let {
             val centerX = finderRect.centerX()
             val centerY = finderRect.centerY()
             val halfWidth = finderRect.width() * (1 + finderTolerance) / 2
             val halfHeight = finderRect.height() * (1 + finderTolerance) / 2
             val crop = Rect(
-                ((centerX - halfWidth).coerceAtLeast(0.0f) * nextImage.width).toInt(),
-                ((centerY - halfHeight).coerceAtLeast(0.0f) * nextImage.height).toInt(),
-                ((centerX + halfWidth).coerceAtMost(1.0f) * nextImage.width).toInt(),
-                ((centerY + halfHeight).coerceAtMost(1.0f) * nextImage.height).toInt()
+                ((centerX - halfWidth).coerceAtLeast(0.0f) * image.width).toInt(),
+                ((centerY - halfHeight).coerceAtLeast(0.0f) * image.height).toInt(),
+                ((centerX + halfWidth).coerceAtMost(1.0f) * image.width).toInt(),
+                ((centerY + halfHeight).coerceAtMost(1.0f) * image.height).toInt()
             )
             crop
         }
+        val timestamp = image.timestamp
+        val frame = ImageFrame(image, cropRect = cropRect, timestamp = timestamp)
+
+        return getSource().offer(frame)
+    }
+
+    override fun onProcess(frame: ImageFrame) {
+        val nextImage = frame.cropImage
+        val cropRect = frame.cropRect
+
         // 缓存申请
         val cache = byteArrayCache.acquire(cropRect.width(), cropRect.height(), nextImage.format)
         // 图像剪裁
@@ -67,24 +68,12 @@ class Preprocessor() : IModule {
             cropRect.left, cropRect.top, cropRect.width(), cropRect.height(),
             cache
         )
-        // 封装imageFrame
-        val imageFrame = ImageFrame(
-            nextImage, cropImage, cropRect, nextImage.timestamp
-        )
-        // 输出
-        sink.offer(imageFrame)
-    }
-
-    fun process(image: ImageWrapper<Any>): Boolean {
-        val size = source.size
-        if (size > config.inputCapacity) {
-            return false
+        frame.let {
+            it.cropImage = cropImage
         }
-        return source.offer(image)
-    }
 
-    fun setSink(sink: BlockingQueue<ImageFrame>) {
-        this.sink = sink
+        // 输出
+        getSink().offer(frame)
     }
 
     /**
