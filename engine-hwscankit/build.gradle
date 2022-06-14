@@ -30,6 +30,7 @@ android {
 }
 
 dependencies {
+    implementation project(":core")
     // scankitSDK
     implementation 'com.huawei.hms:scanplus:2.1.0.300'
 }
