@@ -13,7 +13,7 @@ import kotlin.math.min
  * 后处理
  * 1. 检测结果是否复合
  */
-class OutputProcessor() : BaseModule() {
+class OutputModule() : BaseModule() {
     private var resultListener: Pair<Handler, (ImageResult) -> Unit>? = null
 
     fun getOutput(handler: Handler, callback: (ImageResult) -> Unit) {

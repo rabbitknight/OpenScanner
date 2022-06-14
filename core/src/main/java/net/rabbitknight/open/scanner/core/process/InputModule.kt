@@ -18,7 +18,7 @@ import net.rabbitknight.open.scanner.core.utils.ImageUtils
  *  + NV21 -> YV12
  * 根据晃动检测模块的开关 判断是否处理图像
  */
-class InputProcessor() : BaseModule() {
+class InputModule() : BaseModule() {
     private lateinit var config: Config
     private val byteArrayCache = ByteArrayPool()
 
