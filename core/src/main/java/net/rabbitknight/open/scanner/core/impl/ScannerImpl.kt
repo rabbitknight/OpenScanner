@@ -6,25 +6,23 @@ import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.engine.EngineModule
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
-import net.rabbitknight.open.scanner.core.process.OutputProcessor
 import net.rabbitknight.open.scanner.core.process.InputProcessor
+import net.rabbitknight.open.scanner.core.process.OutputProcessor
 import net.rabbitknight.open.scanner.core.result.ImageResult
-import net.rabbitknight.open.scanner.core.thread.CoreThread
 
-class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
-    private val coreThread = CoreThread(this)
-    private val preprocessor: InputProcessor = InputProcessor()
+class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
+    private val inputModule: InputProcessor = InputProcessor()
     private val engineModule = EngineModule(engines)
-    private val postprocessor = OutputProcessor()
-    private val modules = listOf(coreThread, preprocessor, engineModule, postprocessor)
+    private val outputModule = OutputProcessor()
+    private val modules = listOf(inputModule, engineModule, outputModule)
 
     init {
         // 流串联
-        preprocessor.setSink(engineModule.getSource())
-        engineModule.setSink(postprocessor.getSource())
+        inputModule.setSink(engineModule.getSource())
+        engineModule.setSink(outputModule.getSource())
 
         // 模块启动
-        modules.forEach { it.onInit() }
+        modules.forEach { it.onCreate() }
     }
 
     override fun setConfig(config: Config) {
@@ -32,17 +30,13 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner, Runnable {
     }
 
     override fun process(image: ImageWrapper<Any>): Boolean {
-        return preprocessor.process(image)
+        return inputModule.process(image)
     }
 
     override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) =
-        postprocessor.getOutput(handler!!, callback)
+        outputModule.getOutput(handler!!, callback)
 
     override fun release() {
         modules.forEach { it.onDestroy() }
-    }
-
-    override fun run() {
-        modules.forEach { it.onStep() }
     }
 }

@@ -8,19 +8,15 @@ import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
-import net.rabbitknight.open.scanner.core.lifecycle.IModule
 import net.rabbitknight.open.scanner.core.process.ImageFrame
+import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
-import java.util.concurrent.BlockingQueue
-import java.util.concurrent.LinkedBlockingQueue
 
 /**
  * EngineModule 用来完成对引擎的管理，使用引擎来做数据处理
  */
-class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
+class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
     private val engineImpls = hashMapOf<Class<out Engine>, Engine>()
-    private val source = LinkedBlockingQueue<ImageFrame>()
-    private var sink: BlockingQueue<ImageFrame>? = null
 
     private lateinit var config: Config
 
@@ -30,7 +26,8 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
         this.config = config
     }
 
-    override fun onInit() {
+    override fun onCreate() {
+        super.onCreate()
         engines.forEach {
             val impl = it.newInstance()
             engineImpls[it] = impl
@@ -40,6 +37,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
     }
 
     override fun onDestroy() {
+        super.onDestroy()
         engineImpls.forEach {
             val impl = it.value
             impl.release()
@@ -47,8 +45,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
         engineImpls.clear()
     }
 
-    override fun onStep() {
-        val imageFrame = source.take()
+    override fun onProcess(frame: ImageFrame) {
         val config = this.config
 
         // 解码
@@ -58,14 +55,14 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
 
             val wantedFormat = engine.preferImageFormat()
             // 获取图像
-            val image = imageFrame.cvtImage.getOrPut(wantedFormat) {
-                cvtImage(imageFrame.cropImage, wantedFormat)
+            val image = frame.cvtImage.getOrPut(wantedFormat) {
+                cvtImage(frame.cropImage, wantedFormat)
             }
             // 引擎解码
             val imageResult = engine.decode(image)
 
             // 添加全部结果
-            imageFrame.result.add(imageResult)
+            frame.result.add(imageResult)
 
             // lambda返回值
             imageResult.code == C.CODE_SUCCESS
@@ -76,13 +73,8 @@ class EngineModule(val engines: Array<Class<out Engine>>) : IModule {
             engineImpls.any(decode)
         }
 
-        sink?.offer(imageFrame)
-    }
-
-    fun getSource(): BlockingQueue<ImageFrame> = source
-
-    fun setSink(blockingQueue: BlockingQueue<ImageFrame>) {
-        this.sink = blockingQueue
+        // 输出到下个模块
+        getSink().offer(frame)
     }
 
     /**

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.process.base
 
 import android.util.Log
+import androidx.annotation.CallSuper
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.C.SCHEDULE_PERIOD_MILS
 import net.rabbitknight.open.scanner.core.config.Config
@@ -20,6 +21,7 @@ abstract class BaseModule : IModule {
      */
     open fun moduleName(): String = this.javaClass.simpleName
 
+    @CallSuper
     override fun onCreate() {
         executor = Executors.newScheduledThreadPool(1)
         processFuture = executor.scheduleAtFixedRate(
@@ -30,6 +32,7 @@ abstract class BaseModule : IModule {
         )
     }
 
+    @CallSuper
     override fun onDestroy() {
         processFuture.cancel(true)
         executor.shutdown()
