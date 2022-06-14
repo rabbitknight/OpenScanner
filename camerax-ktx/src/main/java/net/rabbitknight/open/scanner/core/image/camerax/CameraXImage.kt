@@ -1,4 +1,4 @@
-package net.rabbitknight.open.core.scanner.image
+package net.rabbitknight.open.scanner.core.image.camerax
 
 import androidx.camera.core.ImageProxy
 import net.rabbitknight.open.scanner.core.image.ImageFormat
