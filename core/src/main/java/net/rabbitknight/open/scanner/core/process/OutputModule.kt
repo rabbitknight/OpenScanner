@@ -79,6 +79,15 @@ class OutputModule() : BaseModule() {
                 listener.invoke(imageResult)
             }
         }
+        // 内存回收
+        frame.let {
+            // 剪裁后的图像回收
+            it.cropImage.close()
+            // 原始图像回收
+            it.cvtImage.values.forEach {
+                it.close()
+            }
+        }
         // todo 焦距
     }
 

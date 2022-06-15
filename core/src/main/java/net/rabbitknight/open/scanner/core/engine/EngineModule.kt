@@ -1,5 +1,6 @@
 package net.rabbitknight.open.scanner.core.engine
 
+import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.ContextProvider
 import net.rabbitknight.open.scanner.core.ScannerException
@@ -7,7 +8,7 @@ import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
-import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
+import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
@@ -16,11 +17,14 @@ import net.rabbitknight.open.scanner.core.utils.ImageUtils
  * EngineModule 用来完成对引擎的管理，使用引擎来做数据处理
  */
 class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
+    companion object {
+        private const val TAG = "EngineModule"
+    }
+
     private val engineImpls = hashMapOf<Class<out Engine>, Engine>()
 
     private lateinit var config: Config
 
-    private val bufferPool = ByteArrayPool()
 
     override fun onConfig(config: Config) {
         this.config = config
@@ -86,19 +90,28 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
         from: ImageWrapper<ByteArray>,
         @ImageFormat.Format wantedFormat: String
     ): ImageWrapper<ByteArray> {
-        return when (wantedFormat) {
+        val cache = when (wantedFormat) {
             ImageFormat.ARGB -> {
-                val cache = bufferPool.acquire(from.width, from.height, ImageFormat.ARGB)
-                ImageUtils.convertByteArrayToARGB(cvtRecycleOwner, from, cache)
+                val cache = this.acquire(from.width, from.height, ImageFormat.ARGB)
+                val rst = ImageUtils.convertByteArrayToARGB(from, cache)
+                if (!rst) {
+                    Log.e(TAG, "cvtImage: to@${wantedFormat},from@${from},fail!!")
+                }
+                cache
             }
             ImageFormat.YV12 -> {
-                val cache = bufferPool.acquire(from.width, from.height, ImageFormat.YV12)
-                ImageUtils.convertByteArrayToYV12(cvtRecycleOwner, from, cache)
+                val cache = this.acquire(from.width, from.height, ImageFormat.YV12)
+                val rst = ImageUtils.convertByteArrayToYV12(from, cache)
+                if (!rst) {
+                    Log.e(TAG, "cvtImage: to@${wantedFormat},from@${from},fail!!")
+                }
+                cache
             }
             else -> {
                 throw ScannerException("not support $wantedFormat")
             }
         }
+        return cache.wrap(cvtRecycleOwner, wantedFormat, from.width, from.height, from.timestamp)
     }
 
 
@@ -107,7 +120,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
      */
     private val cvtRecycleOwner = object : WrapperOwner<ByteArray> {
         override fun close(payload: ByteArray) {
-            bufferPool.release(payload)
+            release(payload)
         }
     }
 }

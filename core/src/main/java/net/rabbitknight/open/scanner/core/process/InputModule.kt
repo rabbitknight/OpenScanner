@@ -1,9 +1,10 @@
 package net.rabbitknight.open.scanner.core.process
 
+import android.util.Log
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
-import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
+import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.*
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
@@ -19,16 +20,25 @@ import net.rabbitknight.open.scanner.core.utils.ImageUtils
  * 根据晃动检测模块的开关 判断是否处理图像
  */
 class InputModule() : BaseModule() {
+    companion object {
+        private const val TAG = "InputModule"
+    }
+
     private lateinit var config: Config
-    private val byteArrayCache = ByteArrayPool()
 
     override fun onConfig(config: Config) {
         this.config = config
     }
 
+    override fun moduleName(): String = TAG
+
+    /**
+     * 图像接入入口
+     */
     fun process(image: ImageWrapper<Any>): Boolean {
         val config = this.config
 
+        // 处理队列判断有无溢出
         val size = getSource().size
         if (size > config.inputCapacity) {
             return false
@@ -57,20 +67,30 @@ class InputModule() : BaseModule() {
     }
 
     override fun onProcess(frame: ImageFrame) {
-        val nextImage = frame.cropImage
+        val nextImage = frame.raw
         val cropRect = frame.cropRect
 
         // 缓存申请
-        val cache = byteArrayCache.acquire(cropRect.width(), cropRect.height(), nextImage.format)
+        val cache = this.acquire(cropRect.width(), cropRect.height(), nextImage.format)
+        val timestamp = frame.timestamp
+        val cropWidth = cropRect.width()
+        val cropHeight = cropRect.height()
         // 图像剪裁
-        val cropImage = ImageUtils.cropImage(
-            nextImage, cropRecycleOwner,
-            cropRect.left, cropRect.top, cropRect.width(), cropRect.height(),
+        ImageUtils.cropImage(
+            nextImage,
+            cropRect.left, cropRect.top, cropWidth, cropHeight,
             cache
-        )
-        frame.let {
-            it.cropImage = cropImage
+        ) { rst, format ->
+            if (!rst) {
+                Log.e(TAG, "cropImage: rect@${cropRect},to@${format},from@${nextImage},fail!!")
+            }
+            // 通过Unit调用...有点奇葩..
+            val cropImage = cache.wrap(cropOwner, format, cropWidth, cropHeight, timestamp)
+            frame.cropImage = cropImage
         }
+
+        // 释放原始图像,以后的模块只会使用cropImage
+        frame.raw.close()
 
         // 输出
         getSink().offer(frame)
@@ -79,9 +99,9 @@ class InputModule() : BaseModule() {
     /**
      * cropImage回收会到这个接口此处完成真正的数据回收
      */
-    private val cropRecycleOwner = object : WrapperOwner<ByteArray> {
+    private val cropOwner = object : WrapperOwner<ByteArray> {
         override fun close(payload: ByteArray) {
-            byteArrayCache.release(payload)
+            release(payload)
         }
     }
 }

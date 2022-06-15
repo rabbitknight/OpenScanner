@@ -6,6 +6,7 @@ import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.engine.EngineModule
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.InputModule
 import net.rabbitknight.open.scanner.core.process.OutputModule
 import net.rabbitknight.open.scanner.core.result.ImageResult
@@ -16,7 +17,15 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
     private val outputModule = OutputModule()
     private val modules = listOf(inputModule, engineModule, outputModule)
 
+    private val cachePoolMap = mutableMapOf<String, ByteArrayPool>()
+
     init {
+        // 设置缓存池
+        modules.forEach {
+            it.cachePool = cachePoolMap.getOrPut(it.moduleName()) {
+                ByteArrayPool()
+            }
+        }
         // 流串联
         inputModule.setSink(engineModule.getSource())
         engineModule.setSink(outputModule.getSource())

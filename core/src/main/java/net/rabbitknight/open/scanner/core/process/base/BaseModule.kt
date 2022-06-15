@@ -5,6 +5,7 @@ import androidx.annotation.CallSuper
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.C.SCHEDULE_PERIOD_MILS
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import java.util.concurrent.*
 
@@ -15,6 +16,7 @@ abstract class BaseModule : IModule {
     private lateinit var executor: ScheduledExecutorService
     private lateinit var processFuture: ScheduledFuture<*>
 
+    internal lateinit var cachePool: ByteArrayPool
 
     /**
      * 模块名
@@ -58,6 +60,22 @@ abstract class BaseModule : IModule {
     fun setSink(sink: BlockingQueue<ImageFrame>) {
         this.sink = sink
     }
+
+    // region 缓存池
+    /**
+     * 获取缓存
+     */
+    protected fun acquire(width: Int, height: Int, format: String): ByteArray {
+        return cachePool.acquire(width, height, format)
+    }
+
+    /**
+     * 释放缓存
+     */
+    protected fun release(cache: ByteArray) {
+        cachePool.release(cache)
+    }
+    // endregion 缓存池
 
     /**
      * 核心处理

@@ -1,24 +1,23 @@
 package net.rabbitknight.open.scanner.core.utils
 
+import android.graphics.Bitmap
 import android.media.Image
 import android.util.Log
+import net.rabbitknight.open.scanner.core.OpenScanner
 import net.rabbitknight.open.scanner.core.ScannerException
-import net.rabbitknight.open.scanner.core.image.*
-import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
+import net.rabbitknight.open.scanner.core.image.ImageFormat
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.yuvutils.YuvUtils
 
 object ImageUtils {
     private const val TAG = "ImageUtils"
-    private val bufferPool = ByteArrayPool()
+    private val bufferPool = OpenScanner.sharedBufferPool
+    private val arrayPool = OpenScanner.sharedArrayPool
 
     /**
      * 将ByteArray数据转换为ARGB
      */
-    fun convertByteArrayToARGB(
-        owner: WrapperOwner<ByteArray>,
-        input: ImageWrapper<ByteArray>,
-        dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    fun convertByteArrayToARGB(input: ImageWrapper<ByteArray>, dest: ByteArray): Boolean {
         val format = YuvUtils.fourcc(input.format)
         val rst = YuvUtils.convertToARGB(
             input.payload, 0, input.payload.size,
@@ -28,17 +27,13 @@ object ImageUtils {
         if (rst != 0) {
             Log.w(TAG, "convertByteArrayToARGB: ${input},fail [${rst}]")
         }
-        return dest.wrap(owner, ImageFormat.ARGB, input.width, input.height, input.timestamp)
+        return rst == 0
     }
 
     /**
      * 将ByteArray数据转换为YV12
      */
-    fun convertByteArrayToYV12(
-        owner: WrapperOwner<ByteArray>,
-        input: ImageWrapper<ByteArray>,
-        dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    fun convertByteArrayToYV12(input: ImageWrapper<ByteArray>, dest: ByteArray): Boolean {
         val format = YuvUtils.fourcc(input.format)
         val width = input.width
         val height = input.height
@@ -56,17 +51,16 @@ object ImageUtils {
         if (rst != 0) {
             Log.w(TAG, "convertByteArrayToYV12: ${input},fail [${rst}]")
         }
-        return dest.wrap(owner, ImageFormat.YV12, input.width, input.height, input.timestamp)
+        return rst == 0
     }
 
     /**
      * 将图像转化为YV12
      */
     fun convertImageToYV12(
-        owner: WrapperOwner<ByteArray>,
         input: ImageWrapper<Image>,
         dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    ): Boolean {
         val width = input.width
         val height = input.height
         val yLen = width * height
@@ -79,7 +73,7 @@ object ImageUtils {
         val planeU = input.planes[1]
         val planeV = input.planes[2]
         // 借用i420转换为yv12
-        YuvUtils.convertAndroid420ToI420(
+        val rst = YuvUtils.convertAndroid420ToI420(
             planeY.buffer, planeY.rowStride,
             planeU.buffer, planeU.rowStride,
             planeV.buffer, planeV.rowStride,
@@ -89,7 +83,7 @@ object ImageUtils {
             dest, yLen, width / 2,
             width, height
         )
-        return dest.wrap(owner, ImageFormat.YV12, width, height, input.timestamp)
+        return rst == 0
     }
 
     /**
@@ -97,35 +91,43 @@ object ImageUtils {
      */
     fun cropImage(
         input: ImageWrapper<Any>,
-        owner: WrapperOwner<ByteArray>,
         left: Int, top: Int, cropWidth: Int, cropHeight: Int,
-        dest: ByteArray
-    ): ImageWrapper<ByteArray> {
-        when (input.payload) {
+        dest: ByteArray, result: (Boolean, @ImageFormat.Format String) -> Unit
+    ) {
+        val format: String
+        val rst = when (input.payload) {
             // bitmap类型数据
-            is BitmapImage -> {
-                return cropBitmapImage(
-                    input as ImageWrapper<BitmapImage>,
-                    owner, left, top, cropWidth, cropHeight, dest
+            is Bitmap -> {
+                format = ImageFormat.ARGB
+                cropBitmapImage(
+                    input as ImageWrapper<Bitmap>,
+                    left, top, cropWidth, cropHeight, dest
                 )
             }
             // bytearray类型数据
             is ByteArray -> {
-                return if (ImageFormat.isYUV(input.format))
+                if (ImageFormat.isYUV(input.format)) {
+                    format = ImageFormat.I420
                     cropYUVByteArrayImage(
                         input as ImageWrapper<ByteArray>,
-                        owner, left, top, cropWidth, cropHeight, dest
+                        left, top, cropWidth, cropHeight, dest
                     )
-                else cropRGBByteArrayImage(
-                    input as ImageWrapper<ByteArray>,
-                    owner, left, top, cropWidth, cropHeight, dest
-                )
+                } else {
+                    format = ImageFormat.ARGB
+                    cropRGBByteArrayImage(
+                        input as ImageWrapper<ByteArray>,
+                        left, top, cropWidth, cropHeight, dest
+                    )
+
+                }
             }
-            // 其他类型，固定为Camera2或CameraX 都是YUV_420_888
+            // 其他类型，固定为Camera2或CameraX 都必须YUV_420_888
             else -> {
-                return cropCamera2Image(input, owner, left, top, cropWidth, cropHeight, dest)
+                format = ImageFormat.I420
+                cropCamera2Image(input, left, top, cropWidth, cropHeight, dest)
             }
         }
+        result.invoke(rst, format)
     }
 
     /**
@@ -134,11 +136,10 @@ object ImageUtils {
      * 输出的格式应该就是ARGB的
      */
     private fun cropBitmapImage(
-        input: ImageWrapper<BitmapImage>,
-        owner: WrapperOwner<ByteArray>,
+        input: ImageWrapper<Bitmap>,
         left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    ): Boolean {
         val plane = input.planes[0]
         val format = YuvUtils.fourcc(input.format)
         val rst = YuvUtils.convertToARGB(
@@ -152,7 +153,7 @@ object ImageUtils {
             Log.w(TAG, "cropImage: ${input},fail [${rst}]")
         }
         // 通过convert已经转化为了ARGB类型
-        return dest.wrap(owner, ImageFormat.ARGB, cropWidth, cropHeight, input.timestamp)
+        return rst == 0
     }
 
     /**
@@ -161,10 +162,9 @@ object ImageUtils {
      */
     private fun cropRGBByteArrayImage(
         input: ImageWrapper<ByteArray>,
-        owner: WrapperOwner<ByteArray>,
         left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    ): Boolean {
         val format = YuvUtils.fourcc(input.format)
         val raw = input.payload
         val rst = YuvUtils.convertToARGB(
@@ -175,7 +175,7 @@ object ImageUtils {
             0, format
         )
         if (rst != 0) Log.w(TAG, "cropRGBByteArrayImage: ${input},fail [${rst}]")
-        return dest.wrap(owner, input.format, cropWidth, cropHeight, input.timestamp)
+        return rst == 0
     }
 
     /**
@@ -184,10 +184,9 @@ object ImageUtils {
      */
     private fun cropYUVByteArrayImage(
         input: ImageWrapper<ByteArray>,
-        owner: WrapperOwner<ByteArray>,
         left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    ): Boolean {
         val format = YuvUtils.fourcc(input.format)
         val raw = input.payload
         val yLen = cropWidth * cropHeight
@@ -202,7 +201,7 @@ object ImageUtils {
             input.width, input.height, 0, format
         )
         if (rst != 0) Log.w(TAG, "cropYUVByteArrayImage: ${input},fail [${rst}]")
-        return dest.wrap(owner, input.format, cropWidth, cropHeight, input.timestamp)
+        return rst == 0
     }
 
     /**
@@ -211,10 +210,9 @@ object ImageUtils {
      */
     private fun cropCamera2Image(
         input: ImageWrapper<Any>,
-        owner: WrapperOwner<ByteArray>,
         left: Int, top: Int, cropWidth: Int, cropHeight: Int,
         dest: ByteArray
-    ): ImageWrapper<ByteArray> {
+    ): Boolean {
         if (input.format != ImageFormat.YUV_420_888) {
             throw ScannerException("input.format not YUV_420_888 at $input")
         }
@@ -231,7 +229,7 @@ object ImageUtils {
         val planeV = input.planes[2]
 
         // 申请缓存
-        val tmpBuffer = bufferPool.acquire(width, height, input.format)
+        val tmpBuffer = arrayPool.acquire(width, height, input.format)
 
         // 转换为i420
         val cvtRst = YuvUtils.convertAndroid420ToI420(
@@ -265,9 +263,8 @@ object ImageUtils {
         if (cropRst != 0) Log.w(TAG, "cropImageImage: ${input},convertToI420 fail [${cropRst}]")
 
         // 释放缓存
-        bufferPool.release(tmpBuffer)
-
+        arrayPool.release(tmpBuffer)
         // 注意: 这里已经转换为了I420的数据
-        return dest.wrap(owner, ImageFormat.I420, cropWidth, cropHeight, input.timestamp)
+        return cvtRst == 0
     }
 }
