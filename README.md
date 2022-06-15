@@ -22,3 +22,14 @@ A: 首先，对于任何场景，输入到扫码器中的数据类型是固定�
 Q: 目前所有处理都运行在同一线程上，有无考虑过多线程并行加速处理。
 A: 现在整个pipeline都跑在thread模块创建的线程上，但是对于数据的交换，已经通过blockingqueue来完成了，后面的调整是非常简单的，也是必要的。
 
+
+## TODO
+
+1. benchmark 很重要
+
+2. Appearance 接口 frame 和 listener
+
+3. 缓存统一
+
+4. 区分 InitOption 与 MutableConfig
+
