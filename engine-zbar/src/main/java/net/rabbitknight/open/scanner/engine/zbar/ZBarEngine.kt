@@ -37,15 +37,15 @@ class ZBarEngine() : Engine {
         return map(format) != null
     }
 
-    override fun setBarFormat(vararg format: BarcodeFormat) {
+    override fun setBarFormat(format: BarcodeFormat, vararg formats: BarcodeFormat) {
         zbarScanner.setConfig(C.ZBAR_ALL, Config.ENABLE, 0)
-        val formats = format.mapNotNull { map(it) }
-        formats.forEach {
+        val scanTypes = (listOf(format) + formats).mapNotNull { map(it) }
+        scanTypes.forEach {
             zbarScanner.setConfig(it, Config.ENABLE, 1)
         }
     }
 
-    override fun decode(image: ImageWrapper<Any>): ImageResult {
+    override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
         val supports = listOf(
             ImageFormat.Y800,
             ImageFormat.YV12,

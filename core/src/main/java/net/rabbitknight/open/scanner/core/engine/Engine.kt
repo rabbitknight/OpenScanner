@@ -27,12 +27,12 @@ interface Engine {
     /**
      * 设置检测的格式
      */
-    fun setBarFormat(vararg format: BarcodeFormat)
+    fun setBarFormat(format: BarcodeFormat, vararg formats: BarcodeFormat)
 
     /**
      * 解码
      */
-    fun decode(image: ImageWrapper<Any>): ImageResult
+    fun decode(image: ImageWrapper<ByteArray>): ImageResult
 
     /**
      * 倾向的图像格式

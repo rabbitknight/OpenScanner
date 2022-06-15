@@ -33,13 +33,13 @@ class ZXingEngine() : Engine {
         return map(format) != null
     }
 
-    override fun setBarFormat(vararg format: BarcodeFormat) {
-        val formats = format.mapNotNull { map(it) }
-        val hints = mapOf(Pair(DecodeHintType.POSSIBLE_FORMATS, formats))
+    override fun setBarFormat(format: BarcodeFormat, vararg formats: BarcodeFormat) {
+        val hintTypes = (listOf(format) + formats).mapNotNull { map(it) }
+        val hints = mapOf(Pair(DecodeHintType.POSSIBLE_FORMATS, hintTypes))
         zxingCore.setHints(hints)
     }
 
-    override fun decode(image: ImageWrapper<Any>): ImageResult {
+    override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
         val supports = listOf(
             ImageFormat.Y800,
             ImageFormat.YV12,

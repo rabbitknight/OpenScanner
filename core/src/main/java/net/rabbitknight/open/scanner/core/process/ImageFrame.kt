@@ -32,7 +32,7 @@ data class ImageFrame(
     /**
      * 格式转换
      */
-    val cvtImage: MutableMap<@ImageFormat.Format String, ImageWrapper<Any>> = mutableMapOf(),
+    val cvtImage: MutableMap<@ImageFormat.Format String, ImageWrapper<ByteArray>> = mutableMapOf(),
     /**
      * 处理后的兴趣区域
      */

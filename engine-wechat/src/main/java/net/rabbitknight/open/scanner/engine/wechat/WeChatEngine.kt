@@ -35,11 +35,11 @@ class WeChatEngine : Engine {
     override fun supportBarFormat(format: BarcodeFormat): Boolean =
         format == BarcodeFormat.QR_CODE
 
-    override fun setBarFormat(vararg format: BarcodeFormat) {
-        enable = format.contains(BarcodeFormat.QR_CODE)
+    override fun setBarFormat(format: BarcodeFormat, vararg formats: BarcodeFormat) {
+        enable = (format == BarcodeFormat.QR_CODE) || formats.contains(BarcodeFormat.QR_CODE)
     }
 
-    override fun decode(image: ImageWrapper<Any>): ImageResult {
+    override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
         val supports = listOf(
             ImageFormat.Y800,
             ImageFormat.YV12,

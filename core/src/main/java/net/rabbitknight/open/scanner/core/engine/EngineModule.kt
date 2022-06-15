@@ -85,7 +85,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
     private fun cvtImage(
         from: ImageWrapper<ByteArray>,
         @ImageFormat.Format wantedFormat: String
-    ): ImageWrapper<Any> {
+    ): ImageWrapper<ByteArray> {
         return when (wantedFormat) {
             ImageFormat.ARGB -> {
                 val cache = bufferPool.acquire(from.width, from.height, ImageFormat.ARGB)

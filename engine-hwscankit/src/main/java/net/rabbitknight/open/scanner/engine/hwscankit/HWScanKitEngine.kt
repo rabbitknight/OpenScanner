@@ -1,16 +1,33 @@
 package net.rabbitknight.open.scanner.engine.hwscankit
 
 import android.content.Context
+import android.graphics.Bitmap
+import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions
 import com.huawei.hms.ml.scan.HmsScanBase.*
+import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
+import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
+import net.rabbitknight.open.scanner.core.result.Rect
+import java.lang.ref.WeakReference
+import java.nio.ByteBuffer
 
 class HWScanKitEngine : Engine {
+    private lateinit var context: WeakReference<Context>
+
+    private var option: HmsScanAnalyzerOptions =
+        HmsScanAnalyzerOptions.Creator().setHmsScanTypes(ALL_SCAN_TYPE)
+            .setPhotoMode(true).create()
+
+    private var bitmap = Bitmap.createBitmap(1280, 720, Bitmap.Config.ARGB_8888)
+    private var buffer = ByteBuffer.allocate(1280 * 720 * 4)
+
     override fun init(context: Context) {
-        // no-op
+        this.context = WeakReference(context)
     }
 
     override fun release() {
@@ -21,19 +38,58 @@ class HWScanKitEngine : Engine {
         return map(format) != null
     }
 
-    override fun setBarFormat(vararg format: BarcodeFormat) {
-        val formats = format.mapNotNull { map(it) }
-
-//        HmsScanAnalyzerOptions.Creator().setHmsScanTypes(scanType).setPhotoMode(true).create()
+    override fun setBarFormat(format: BarcodeFormat, vararg formats: BarcodeFormat) {
+        val types = (listOf(format) + formats).mapNotNull { map(it) }
+        val scanType = types.firstOrNull() ?: return
+        val scanTypes = types.let {
+            if (types.size < 2) intArrayOf()
+            else types.subList(1, types.size - 1).toIntArray()
+        }
+        option = HmsScanAnalyzerOptions.Creator().setHmsScanTypes(scanType, *scanTypes)
+            .setPhotoMode(true).create()
     }
 
-    override fun decode(image: ImageWrapper<Any>): ImageResult {
-        TODO("Not yet implemented")
+    override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
+        val context = context.get() ?: return ImageResult(C.CODE_FAIL, image.timestamp, emptyList())
+        if (image.format != ImageFormat.ARGB) {
+            return ImageResult(C.CODE_FAIL, image.timestamp, emptyList())
+        }
+        // 缓存拷贝
+        if (buffer.capacity() < image.payload.size) {
+            buffer = ByteBuffer.allocate(image.payload.size)
+        }
+        buffer.let {
+            it.position(0)
+            it.get(image.payload)
+            it.position(0)
+        }
+        // bitmap 构造
+        if (bitmap.allocationByteCount < image.width * image.height * 4) {
+            bitmap.recycle()
+            bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+        }
+        bitmap.copyPixelsFromBuffer(buffer)
+
+        // 扫码结果
+        val hmsScans = ScanUtil.decodeWithBitmap(context, bitmap, option)
+        // 结果转换
+        val results = hmsScans?.map {
+            val rect = it.borderRect.let { border ->
+                Rect(border.left, border.top, border.right, border.bottom)
+            }
+            val rawData = it.originValueByte
+            val result = it.originalValue
+            val format = map(it.scanType)!!
+            BarcodeResult(format, rect, result, rawData)
+        } ?: emptyList()
+        val code = if (results.isEmpty()) C.CODE_FAIL else C.CODE_SUCCESS
+
+        // 包装&输出
+        val result = ImageResult(code, image.timestamp, results)
+        return result
     }
 
-    override fun preferImageFormat(): String {
-        TODO("Not yet implemented")
-    }
+    override fun preferImageFormat(): String = ImageFormat.ARGB
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {
