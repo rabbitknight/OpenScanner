@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.impl
 
 import android.os.Handler
+import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.Scanner
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.engine.Engine
@@ -9,7 +10,6 @@ import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.InputModule
 import net.rabbitknight.open.scanner.core.process.OutputModule
-import net.rabbitknight.open.scanner.core.result.ImageResult
 
 class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
     private val inputModule: InputModule = InputModule()
@@ -38,12 +38,14 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
         modules.forEach { it.onConfig(config) }
     }
 
-    override fun process(image: ImageWrapper<Any>): Boolean {
-        return inputModule.process(image)
+    override fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {
+        return inputModule.process(image, frameListener)
     }
 
-    override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) =
-        outputModule.getOutput(handler!!, callback)
+    override fun getResult(
+        handler: Handler?,
+        callback: ScanResultListener
+    ) = outputModule.getOutput(handler!!, callback)
 
     override fun release() {
         modules.forEach { it.onDestroy() }

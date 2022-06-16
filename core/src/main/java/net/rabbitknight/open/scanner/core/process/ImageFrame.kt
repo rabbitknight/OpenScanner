@@ -1,11 +1,13 @@
 package net.rabbitknight.open.scanner.core.process
 
+import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
+import java.lang.ref.WeakReference
 
 /**
  * 中间图像
@@ -15,6 +17,11 @@ data class ImageFrame(
      * 原始数据
      */
     val raw: ImageWrapper<Any>,
+
+    /**
+     * 帧回调
+     */
+    val frameListener: WeakReference<ScanResultListener>,
     /**
      * 剪裁数据
      */

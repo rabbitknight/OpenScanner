@@ -3,6 +3,7 @@ package net.rabbitknight.open.scanner.core.process
 import android.os.Handler
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.*
 import kotlin.math.abs
@@ -14,9 +15,9 @@ import kotlin.math.min
  * 1. 检测结果是否复合
  */
 class OutputModule() : BaseModule() {
-    private var resultListener: Pair<Handler, (ImageResult) -> Unit>? = null
+    private var resultListener: Pair<Handler, (ImageWrapper<Any>, ImageResult) -> Unit>? = null
 
-    fun getOutput(handler: Handler, callback: (ImageResult) -> Unit) {
+    fun getOutput(handler: Handler, callback: (ImageWrapper<Any>, ImageResult) -> Unit) {
         resultListener = Pair(handler, callback)
     }
 
@@ -65,6 +66,7 @@ class OutputModule() : BaseModule() {
         val code = if (results.isNotEmpty()) {
             C.CODE_SUCCESS
         } else {
+            // TODO: code 高优先级
             frame.result.first().code
         }
 
@@ -72,12 +74,19 @@ class OutputModule() : BaseModule() {
         val imageResult = ImageResult(
             code, frame.timestamp, results
         )
+        val rawImage = frame.raw
+        // 帧回调通知
         resultListener?.let {
             val handler = it.first
             val listener = it.second
             handler.post {
-                listener.invoke(imageResult)
+                listener.invoke(rawImage, imageResult)
             }
+        }
+
+        // frame通知
+        frame.frameListener.get()?.let {
+            it.invoke(rawImage, imageResult)
         }
         // 内存回收
         frame.let {

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.process
 
 import android.util.Log
+import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
@@ -8,6 +9,7 @@ import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.*
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
+import java.lang.ref.WeakReference
 
 /**
  * 预处理引擎
@@ -35,7 +37,7 @@ class InputModule() : BaseModule() {
     /**
      * 图像接入入口
      */
-    fun process(image: ImageWrapper<Any>): Boolean {
+    fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {
         val config = this.config
 
         // 处理队列判断有无溢出
@@ -60,8 +62,14 @@ class InputModule() : BaseModule() {
             )
             crop
         }
+        val listener = WeakReference(frameListener)
         val timestamp = image.timestamp
-        val frame = ImageFrame(image, cropRect = cropRect, timestamp = timestamp)
+        val frame = ImageFrame(
+            image,
+            frameListener = listener,
+            cropRect = cropRect,
+            timestamp = timestamp
+        )
 
         return getSource().offer(frame)
     }

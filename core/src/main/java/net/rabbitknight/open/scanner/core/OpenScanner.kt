@@ -8,7 +8,6 @@ import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.image.pool.ByteBufferPool
 import net.rabbitknight.open.scanner.core.impl.ScannerImpl
-import net.rabbitknight.open.scanner.core.result.ImageResult
 
 class OpenScanner private constructor(
     engines: Array<Class<out Engine>>
@@ -39,14 +38,14 @@ class OpenScanner private constructor(
         }
     }
 
-    override fun process(image: ImageWrapper<Any>): Boolean {
+    override fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {
         return scannerImpl.process(image)
     }
 
     /**
      * 获取结果
      */
-    override fun getResult(handler: Handler?, callback: (ImageResult) -> Unit) {
+    override fun getResult(handler: Handler?, callback: ScanResultListener) {
         scannerImpl.getResult(handler ?: mainHandler, callback)
     }
 
