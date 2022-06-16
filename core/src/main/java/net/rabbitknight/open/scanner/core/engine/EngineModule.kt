@@ -5,6 +5,7 @@ import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.ContextProvider
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
@@ -30,8 +31,8 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
         this.config = config
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onCreate(option: InitOption) {
+        super.onCreate(option)
         engines.forEach {
             val impl = it.newInstance()
             engineImpls[it] = impl

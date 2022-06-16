@@ -15,11 +15,17 @@ import kotlin.math.min
  * 1. 检测结果是否复合
  */
 class OutputModule() : BaseModule() {
+    companion object {
+        private const val TAG = "OutputModule"
+    }
+
     private var resultListener: Pair<Handler, (ImageWrapper<Any>, ImageResult) -> Unit>? = null
 
     fun getOutput(handler: Handler, callback: (ImageWrapper<Any>, ImageResult) -> Unit) {
         resultListener = Pair(handler, callback)
     }
+
+    override fun moduleName(): String = TAG
 
     override fun onConfig(config: Config) {
     }

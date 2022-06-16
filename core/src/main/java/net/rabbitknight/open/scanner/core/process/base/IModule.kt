@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.process.base
 
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 
 /**
@@ -11,7 +12,7 @@ interface IModule {
     /**
      * 模块创建
      */
-    fun onCreate()
+    fun onCreate(option: InitOption)
 
     /**
      * 模块销毁

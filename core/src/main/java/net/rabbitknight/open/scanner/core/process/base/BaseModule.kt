@@ -5,6 +5,7 @@ import androidx.annotation.CallSuper
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.C.SCHEDULE_PERIOD_MILS
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import java.util.concurrent.*
@@ -18,13 +19,16 @@ abstract class BaseModule : IModule {
 
     internal lateinit var cachePool: ByteArrayPool
 
+    private lateinit var initOption: InitOption
+
     /**
      * 模块名
      */
     open fun moduleName(): String = this.javaClass.simpleName
 
     @CallSuper
-    override fun onCreate() {
+    override fun onCreate(option: InitOption) {
+        this.initOption = option
         executor = Executors.newScheduledThreadPool(1)
         processFuture = executor.scheduleAtFixedRate(
             processThread,
@@ -43,6 +47,7 @@ abstract class BaseModule : IModule {
     override fun onConfig(config: Config) {
     }
 
+    protected fun getOption() = initOption
 
     /**
      * 获取数据源

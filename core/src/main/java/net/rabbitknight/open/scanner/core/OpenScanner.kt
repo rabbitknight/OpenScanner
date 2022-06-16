@@ -3,6 +3,7 @@ package net.rabbitknight.open.scanner.core
 import android.os.Handler
 import android.os.Looper
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
@@ -10,6 +11,7 @@ import net.rabbitknight.open.scanner.core.image.pool.ByteBufferPool
 import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 
 class OpenScanner private constructor(
+    initOption: InitOption,
     engines: Array<Class<out Engine>>
 ) : Scanner {
     companion object {
@@ -20,14 +22,14 @@ class OpenScanner private constructor(
 
         val sharedArrayPool = ByteArrayPool()
 
-        fun create(engines: Array<Class<out Engine>>): OpenScanner {
-            return OpenScanner(engines)
+        fun create(initOption: InitOption, engines: Array<Class<out Engine>>): OpenScanner {
+            return OpenScanner(initOption, engines)
         }
     }
 
     private val mainHandler = Handler(Looper.getMainLooper())
 
-    private val scannerImpl = ScannerImpl(engines)
+    private val scannerImpl = ScannerImpl(initOption, engines)
 
     /**
      * 配置

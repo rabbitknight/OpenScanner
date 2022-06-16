@@ -33,3 +33,5 @@ A: 现在整个pipeline都跑在thread模块创建的线程上，但是对于数
 
 4. 区分 InitOption 与 MutableConfig
 
+5. 检测 识别分离
+

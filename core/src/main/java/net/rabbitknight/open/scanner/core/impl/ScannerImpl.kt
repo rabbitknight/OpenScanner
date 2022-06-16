@@ -4,6 +4,7 @@ import android.os.Handler
 import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.Scanner
 import net.rabbitknight.open.scanner.core.config.Config
+import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.engine.EngineModule
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
@@ -11,7 +12,7 @@ import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.InputModule
 import net.rabbitknight.open.scanner.core.process.OutputModule
 
-class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
+class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<out Engine>>) : Scanner {
     private val inputModule: InputModule = InputModule()
     private val engineModule = EngineModule(engines)
     private val outputModule = OutputModule()
@@ -31,7 +32,7 @@ class ScannerImpl(val engines: Array<Class<out Engine>>) : Scanner {
         engineModule.setSink(outputModule.getSource())
 
         // 模块启动
-        modules.forEach { it.onCreate() }
+        modules.forEach { it.onCreate(initOption) }
     }
 
     override fun setConfig(config: Config) {

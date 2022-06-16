@@ -42,7 +42,7 @@ class InputModule() : BaseModule() {
 
         // 处理队列判断有无溢出
         val size = getSource().size
-        if (size > config.inputCapacity) {
+        if (size > getOption().inputCapacity) {
             return false
         }
 

@@ -19,11 +19,6 @@ data class Config(
     val finderTolerance: Float = 0.0f,
 
     /**
-     * 是否开启晃动检测
-     */
-    val enableShakeFilter: Boolean = DEFAULT_SHAKE_DETECTOR_ENABLE,
-
-    /**
      * 输入缓存大小
      */
     val inputCapacity: Int = DEFAULT_INPUT_CAPACITY,
