@@ -1,8 +1,10 @@
 package net.rabbitknight.open.scanner.core.engine
 
 import android.content.Context
+import androidx.annotation.StringDef
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
-import net.rabbitknight.open.scanner.core.image.ImageFormat
+import net.rabbitknight.open.scanner.core.image.ImageFormat.ARGB
+import net.rabbitknight.open.scanner.core.image.ImageFormat.YV12
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.ImageResult
 
@@ -37,6 +39,10 @@ interface Engine {
     /**
      * 倾向的图像格式
      */
-    @ImageFormat.Format
+    @PreferFormat
     fun preferImageFormat(): String
+
+
+    @StringDef(value = [ARGB, YV12])
+    annotation class PreferFormat
 }

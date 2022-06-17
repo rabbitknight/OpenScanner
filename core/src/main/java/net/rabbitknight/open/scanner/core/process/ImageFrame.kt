@@ -52,7 +52,7 @@ data class ImageFrame(
 )
 
 
-object NullImageWrapper : ImageWrapper<ByteArray> {
+private object NullImageWrapper : ImageWrapper<ByteArray> {
     override val owner: WrapperOwner<out ByteArray>
         get() = throw ScannerException("NullImageWrapper:BOOM!")
     override val format: String
