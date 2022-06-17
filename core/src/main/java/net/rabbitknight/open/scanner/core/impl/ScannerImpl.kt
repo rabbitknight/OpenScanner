@@ -12,7 +12,8 @@ import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.InputModule
 import net.rabbitknight.open.scanner.core.process.OutputModule
 
-class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<out Engine>>) : Scanner {
+class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<out Engine>>) :
+    Scanner {
     private val inputModule: InputModule = InputModule()
     private val engineModule = EngineModule(engines)
     private val outputModule = OutputModule()
@@ -35,7 +36,7 @@ class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<o
         modules.forEach { it.onCreate(initOption) }
     }
 
-    override fun setConfig(config: Config) {
+    override fun config(config: Config) {
         modules.forEach { it.onConfig(config) }
     }
 

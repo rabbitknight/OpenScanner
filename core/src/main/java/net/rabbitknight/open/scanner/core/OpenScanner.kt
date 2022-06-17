@@ -34,9 +34,9 @@ class OpenScanner private constructor(
     /**
      * 配置
      */
-    override fun setConfig(config: Config) {
+    override fun config(config: Config) {
         mainHandler.post {
-            scannerImpl.setConfig(config)
+            scannerImpl.config(config)
         }
     }
 

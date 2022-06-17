@@ -9,7 +9,7 @@ interface Scanner {
     /**
      * 配置
      */
-    fun setConfig(config: Config)
+    fun config(config: Config)
 
     /**
      * 处理图像
