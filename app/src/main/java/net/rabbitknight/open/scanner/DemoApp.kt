@@ -9,6 +9,7 @@ import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.engine.hwscankit.HWScanKitEngine
+import net.rabbitknight.open.scanner.engine.mlkit.MLKitEngine
 import net.rabbitknight.open.scanner.engine.wechat.WeChatEngine
 import net.rabbitknight.open.scanner.engine.zbar.ZBarEngine
 import net.rabbitknight.open.scanner.engine.zxing.ZXingEngine
@@ -29,7 +30,8 @@ class DemoApp : Application() {
             WeChatEngine::class.java,
             HWScanKitEngine::class.java,
             ZBarEngine::class.java,
-            ZXingEngine::class.java
+            ZXingEngine::class.java,
+            MLKitEngine::class.java
         )
 
         // 实例创建

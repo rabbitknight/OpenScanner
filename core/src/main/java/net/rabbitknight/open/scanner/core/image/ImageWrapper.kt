@@ -87,5 +87,9 @@ interface ImageWrapper<out T : Any> {
  * 当wrapper不再使用时，通知外面自行处理
  */
 interface WrapperOwner<T : Any> {
+    /**
+     * 资源被使用完，触发该方法
+     * Owner应自行处理回收
+     */
     fun close(payload: T)
 }

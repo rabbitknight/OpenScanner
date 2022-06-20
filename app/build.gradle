@@ -40,7 +40,7 @@ dependencies {
     implementation project(":core")
 //    implementation project(":engine-czxing")
     implementation project(":engine-hwscankit")
-//    implementation project(":engine-mlkit")
+    implementation project(":engine-mlkit")
     implementation project(":engine-wechat")
     implementation project(":engine-zbar")
     implementation project(":engine-zxing")
