@@ -93,7 +93,7 @@ class InputModule() : BaseModule() {
                 Log.e(TAG, "cropImage: rect@${cropRect},to@${format},from@${nextImage},fail!!")
             }
             // 通过Unit调用...有点奇葩..
-            val cropImage = cache.wrap(cropOwner, format, cropWidth, cropHeight, timestamp)
+            val cropImage = cache.wrap(format, cropWidth, cropHeight, timestamp,cropOwner)
             frame.cropImage = cropImage
         }
 

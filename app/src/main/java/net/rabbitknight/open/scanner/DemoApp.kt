@@ -6,7 +6,6 @@ import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.OpenScanner
 import net.rabbitknight.open.scanner.core.config.InitOption
-import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.engine.hwscankit.HWScanKitEngine
 import net.rabbitknight.open.scanner.engine.mlkit.MLKitEngine
@@ -41,12 +40,11 @@ class DemoApp : Application() {
         val bitmap = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
 
         // 图像封装
-        val image = bitmap.wrap(0L, object : WrapperOwner<Bitmap> {
-            override fun close(payload: Bitmap) {
-                // 类型回收
-                Log.i(TAG, "close: raw image payload release!")
-            }
-        })
+        val image = bitmap.wrap(0L) {
+            // 类型回收
+            Log.i(TAG, "close: raw image payload release!")
+        }
+
 
         // 图像处理
         val inputRst = scanner.process(image) { raw, result ->

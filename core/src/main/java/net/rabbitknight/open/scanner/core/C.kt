@@ -1,7 +1,7 @@
 package net.rabbitknight.open.scanner.core
 
 object C {
-    const val TAG = "Scanner"
+    const val TAG = "OScanner"
 
     const val CODE_SUCCESS = 0
     const val CODE_FAIL = -1

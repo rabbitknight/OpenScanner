@@ -112,7 +112,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
                 throw ScannerException("not support $wantedFormat")
             }
         }
-        return cache.wrap(cvtRecycleOwner, wantedFormat, from.width, from.height, from.timestamp)
+        return cache.wrap(wantedFormat, from.width, from.height, from.timestamp, cvtRecycleOwner)
     }
 
 
