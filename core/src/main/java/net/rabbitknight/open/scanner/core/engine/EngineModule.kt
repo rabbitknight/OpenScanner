@@ -24,7 +24,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
 
     private val engineImpls = hashMapOf<Class<out Engine>, Engine>()
 
-    private lateinit var config: Config
+    private var config: Config = Config()
 
 
     override fun onConfig(config: Config) {

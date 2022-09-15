@@ -45,22 +45,6 @@ class DemoApp : Application() {
             Log.i(TAG, "close: raw image payload release!")
         }
 
-
-        // 图像处理
-        val inputRst = scanner.process(image) { raw, result ->
-            // 这里是单次结果回调
-
-            // 原始数据 此时已经被回收了
-            Log.i(TAG, "scanner.process() output: image is ${raw} ")
-            // 处理结果 获取
-            Log.i(TAG, "scanner.process() output: result is ${result}")
-        }
-
-        // 是否被scanner正常接收
-        if (inputRst) {
-            Log.d(TAG, "scanner.process() input rst = ${inputRst}")
-        }
-
         // 每帧 结果
         scanner.getResult { raw, result ->
             // 时间戳
@@ -75,5 +59,18 @@ class DemoApp : Application() {
                 )
             }
         }
+
+        // 图像处理
+        val inputRst = scanner.process(image) { raw, result ->
+            // 这里是单次结果回调
+
+            // 原始数据 此时已经被回收了
+            Log.i(TAG, "scanner.process() output: image is ${raw} ")
+            // 处理结果 获取
+            Log.i(TAG, "scanner.process() output: result is ${result}")
+        }
+
+        // 是否被scanner正常接收
+        Log.d(TAG, "scanner.process() input rst = ${inputRst}")
     }
 }

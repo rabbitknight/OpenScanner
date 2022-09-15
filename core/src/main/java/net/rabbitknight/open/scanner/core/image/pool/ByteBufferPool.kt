@@ -14,9 +14,9 @@ class ByteBufferPool(maxSize: Long = 1024 * 1024 * 20) : BaseCachePool<ByteBuffe
      */
     @Synchronized
     fun acquire(width: Int, height: Int, @Format format: String): ByteBuffer {
-        val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
-        val wantedSize = width * height * pixelSize
-        return acquire(wantedSize)
+        val pixelSize = ImageFormat.getBitsPerPixel(format)
+        val wantedSize = width * height * pixelSize / 8.0f
+        return acquire(wantedSize.toInt())
     }
 
     /**

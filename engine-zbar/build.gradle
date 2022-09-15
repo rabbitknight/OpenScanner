@@ -30,6 +30,6 @@ android {
 }
 
 dependencies {
-    compileOnly project(path: ':3rdpart:zbar')
+    implementation project(path: ':3rdpart:zbar')
     implementation project(":core")
 }

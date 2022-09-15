@@ -26,7 +26,7 @@ class InputModule() : BaseModule() {
         private const val TAG = "InputModule"
     }
 
-    private lateinit var config: Config
+    private var config: Config = Config()
 
     override fun onConfig(config: Config) {
         this.config = config
@@ -93,7 +93,7 @@ class InputModule() : BaseModule() {
                 Log.e(TAG, "cropImage: rect@${cropRect},to@${format},from@${nextImage},fail!!")
             }
             // 通过Unit调用...有点奇葩..
-            val cropImage = cache.wrap(format, cropWidth, cropHeight, timestamp,cropOwner)
+            val cropImage = cache.wrap(format, cropWidth, cropHeight, timestamp, cropOwner)
             frame.cropImage = cropImage
         }
 

@@ -1,13 +1,33 @@
 package net.rabbitknight.open.scanner.engine.zxing
 
 import android.content.Context
-import com.google.zxing.*
+import com.google.zxing.BinaryBitmap
+import com.google.zxing.DecodeHintType
+import com.google.zxing.MultiFormatReader
+import com.google.zxing.PlanarYUVLuminanceSource
+import com.google.zxing.Result
 import com.google.zxing.common.HybridBinarizer
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
-import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.AZTEC
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODABAR
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_128
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_39
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_93
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.DATA_MATRIX
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.EAN_13
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.EAN_8
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.ITF
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.MAXICODE
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.PDF_417
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.QR_CODE
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.RSS_14
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.RSS_EXPANDED
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_A
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_E
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_EAN_EXTENSION
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
@@ -18,7 +38,11 @@ import java.lang.Math.min
 class ZXingEngine() : Engine {
     private var buffer = ByteArray(1024 * 1024 * 1)
     private val zxingCore = MultiFormatReader().also {
-        this.setBarFormat(QR_CODE)
+        val hints = Pair(
+            DecodeHintType.POSSIBLE_FORMATS,
+            listOf(com.google.zxing.BarcodeFormat.QR_CODE)
+        )
+        it.setHints(mapOf(hints))
     }
 
     override fun init(context: Context) {

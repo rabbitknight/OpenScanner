@@ -9,9 +9,9 @@ class ByteArrayPool(maxSize: Long = 1024 * 1024 * 20) : BaseCachePool<ByteArray>
      */
     @Synchronized
     fun acquire(width: Int, height: Int, @ImageFormat.Format format: String): ByteArray {
-        val pixelSize = ImageFormat.getBitsPerPixel(format) / 8
-        val wantedSize = width * height * pixelSize
-        return acquire(wantedSize)
+        val pixelSize = ImageFormat.getBitsPerPixel(format)
+        val wantedSize = width * height * pixelSize / 8.0f
+        return acquire(wantedSize.toInt())
     }
 
     override fun createCache(size: Int): ByteArray = ByteArray(size)

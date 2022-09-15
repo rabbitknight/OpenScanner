@@ -20,7 +20,7 @@ import net.sourceforge.zbar.Symbol
 
 class ZBarEngine() : Engine {
     private val zbarScanner = ImageScanner().also {
-        this.setBarFormat(QR_CODE)
+        it.setConfig(Symbol.QRCODE, Config.ENABLE, 1)
     }
     private var buffer = ByteArray(1024 * 1024 * 1)
     private var zbarImage = Image(ZBAR_FORMAT_Y800)

@@ -41,7 +41,7 @@ class OpenScanner private constructor(
     }
 
     override fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {
-        return scannerImpl.process(image)
+        return scannerImpl.process(image, frameListener)
     }
 
     /**

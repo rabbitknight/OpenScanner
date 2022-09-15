@@ -21,8 +21,7 @@ object AssetsLoader {
             val out = File(outputDir, it)
             if (!out.exists()) {
                 val ous = FileOutputStream(out)
-                val ins = assets.open(it)
-                assets.close()
+                val ins = assets.open("$assetPath/$it")
                 ins.use {
                     ous.use {
                         ins.copyTo(ous)
