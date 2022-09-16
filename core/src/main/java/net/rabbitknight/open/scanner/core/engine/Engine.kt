@@ -45,4 +45,9 @@ interface Engine {
 
     @StringDef(value = [ARGB, YV12])
     annotation class PreferFormat
+
+    /**
+     * 引擎名称
+     */
+    fun name(): String
 }

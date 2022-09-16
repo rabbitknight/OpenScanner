@@ -93,14 +93,16 @@ class ZXingEngine() : Engine {
             BinaryBitmap(HybridBinarizer(source))
         }
         val result: ImageResult = try {
-            zxingCore.decode(bitmap).toImageResult(timestamp)
+            zxingCore.decodeWithState(bitmap).toImageResult(image, timestamp)
         } catch (e: Exception) {
-            ImageResult(C.CODE_FAIL, timestamp, emptyList())
+            ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
         }
         return result
     }
 
     override fun preferImageFormat(): String = ImageFormat.YV12
+
+    override fun name(): String = "ZXing"
 
     private fun map(format: BarcodeFormat): com.google.zxing.BarcodeFormat? {
         return when (format) {
@@ -159,11 +161,18 @@ class ZXingEngine() : Engine {
         }
     }
 
-    private fun Result.toImageResult(timestamp: Long): ImageResult {
+    private fun Result.toImageResult(image: ImageWrapper<ByteArray>, timestamp: Long): ImageResult {
         val format = map(this.barcodeFormat)!!
+        val rect = resultPoints.takeIf { it != null && it.size == 4 }?.let {
+            val left = it[1].x.toInt()
+            val top = it[1].y.toInt()
+            val right = it[0].x.toInt()
+            val bottom = it[2].y.toInt()
+            Rect(left, top, right, bottom)
+        } ?: Rect(0, 0, image.width, image.height)
         val barcodeResult = BarcodeResult(
-            format, Rect(0, 0, 0, 0), this.text, this.rawBytes
+            format, rect, this.text, this.text.toByteArray()
         )
-        return ImageResult(C.CODE_SUCCESS, timestamp, listOf(barcodeResult))
+        return ImageResult(C.CODE_SUCCESS, timestamp, listOf(barcodeResult), name())
     }
 }

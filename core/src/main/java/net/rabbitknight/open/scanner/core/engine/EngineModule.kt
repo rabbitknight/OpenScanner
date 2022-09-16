@@ -13,6 +13,8 @@ import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
+import net.rabbitknight.open.scanner.core.utils.download
+import java.io.File
 
 /**
  * EngineModule 用来完成对引擎的管理，使用引擎来做数据处理
@@ -63,6 +65,11 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
             val image = frame.cvtImage.getOrPut(wantedFormat) {
                 cvtImage(frame.cropImage, wantedFormat)
             }
+//            val downloadFile = File(
+//                ContextProvider.context().filesDir,
+//                "${image.format}_${System.currentTimeMillis()}.jpg"
+//            )
+//            image.download(downloadFile)
             // 引擎解码
             val imageResult = engine.decode(image)
 

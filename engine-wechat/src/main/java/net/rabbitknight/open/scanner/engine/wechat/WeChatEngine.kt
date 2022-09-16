@@ -65,7 +65,7 @@ class WeChatEngine : Engine {
         val outTexts = mutableListOf<String>()
         qrcodeEngine.decode(buffer, width, height, emptyList(), outRects, outTexts)
         if (outTexts.isEmpty()) {
-            return ImageResult(C.CODE_FAIL, timestamp, emptyList())
+            return ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
         } else {
             val barcodeResults = mutableListOf<BarcodeResult>()
             for (i in 0 until outTexts.size) {
@@ -78,11 +78,13 @@ class WeChatEngine : Engine {
                     )
                 )
             }
-            return ImageResult(C.CODE_SUCCESS, timestamp, barcodeResults)
+            return ImageResult(C.CODE_SUCCESS, timestamp, barcodeResults, name())
         }
     }
 
     override fun preferImageFormat(): String = ImageFormat.YV12
+
+    override fun name(): String = "WeChatQrcode"
 
     private fun ImageWrapper.PlaneWrapper.toByteArray(out: ByteArray, width: Int, height: Int) {
         buffer.rewind()

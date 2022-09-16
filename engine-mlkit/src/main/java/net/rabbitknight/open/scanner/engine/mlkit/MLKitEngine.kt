@@ -60,6 +60,7 @@ class MLKitEngine : Engine {
     }
 
     override fun preferImageFormat(): String = ImageFormat.YV12
+    override fun name(): String = "MLKit"
 
 
     private fun ImageWrapper<ByteArray>.toInputImage(): InputImage {
@@ -69,7 +70,7 @@ class MLKitEngine : Engine {
     }
 
     private fun List<Barcode>.toImageResult(timestamp: Long): ImageResult {
-        if (this.isEmpty()) return ImageResult(C.CODE_FAIL, timestamp, emptyList())
+        if (this.isEmpty()) return ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
         val barcodes = this.map {
             val format = map(it.format)!!
             val box = it.boundingBox!!.let { Rect(it.left, it.top, it.right, it.bottom) }
@@ -78,7 +79,7 @@ class MLKitEngine : Engine {
             val corners = it.cornerPoints!!
             BarcodeResult(format, box, payload, raw)
         }
-        return ImageResult(C.CODE_SUCCESS, timestamp, barcodes)
+        return ImageResult(C.CODE_SUCCESS, timestamp, barcodes, name())
     }
 
 

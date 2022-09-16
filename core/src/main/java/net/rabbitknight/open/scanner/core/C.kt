@@ -1,5 +1,7 @@
 package net.rabbitknight.open.scanner.core
 
+internal const val TAG = C.TAG
+
 object C {
     const val TAG = "OScanner"
 

@@ -76,19 +76,24 @@ class ZBarEngine() : Engine {
                 val format = map(it.type)
                 val text = it.data
                 val rawBytes = it.dataBytes
+                val rect = it.bounds.let { bounds ->
+                    Rect(bounds[0], bounds[1], bounds[2], bounds[3])
+                }
                 if (format != null) {
-                    BarcodeResult(format, Rect(0, 0, 0, 0), text, rawBytes)
+                    BarcodeResult(format, rect, text, rawBytes)
                 } else {
                     null
                 }
             }
-            return ImageResult(CODE_SUCCESS, timestamp, barcodeResults)
+            return ImageResult(CODE_SUCCESS, timestamp, barcodeResults,name())
         } else {
-            return ImageResult(CODE_FAIL, timestamp, emptyList())
+            return ImageResult(CODE_FAIL, timestamp, emptyList(),name())
         }
     }
 
     override fun preferImageFormat(): String = ImageFormat.YV12
+
+    override fun name(): String = "ZBar"
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {

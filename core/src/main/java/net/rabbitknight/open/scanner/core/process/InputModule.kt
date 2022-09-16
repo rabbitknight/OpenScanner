@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.process
 
 import android.util.Log
+import net.rabbitknight.open.scanner.core.ContextProvider
 import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
@@ -9,6 +10,8 @@ import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.*
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
+import net.rabbitknight.open.scanner.core.utils.download
+import java.io.File
 import java.lang.ref.WeakReference
 
 /**
@@ -96,6 +99,11 @@ class InputModule() : BaseModule() {
             val cropImage = cache.wrap(format, cropWidth, cropHeight, timestamp, cropOwner)
             frame.cropImage = cropImage
         }
+//        val downloadFile = File(
+//            ContextProvider.context().filesDir,
+//            "${frame.cropImage.format}_${System.currentTimeMillis()}.jpg"
+//        )
+//        frame.cropImage.download(downloadFile)
 
         // 释放原始图像,以后的模块只会使用cropImage
         frame.raw.close()

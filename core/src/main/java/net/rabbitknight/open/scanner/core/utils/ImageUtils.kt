@@ -19,9 +19,10 @@ object ImageUtils {
      */
     fun convertByteArrayToARGB(input: ImageWrapper<ByteArray>, dest: ByteArray): Boolean {
         val format = YuvUtils.fourcc(input.format)
+        val stride = input.width * ImageFormat.getBitsPerPixel(ImageFormat.ARGB) / 8
         val rst = YuvUtils.convertToARGB(
             input.payload, 0, input.payload.size,
-            dest, 0, input.width, 0, 0, input.width, input.height,
+            dest, 0, stride, 0, 0, input.width, input.height,
             input.width, input.height, 0, format
         )
         if (rst != 0) {
@@ -142,9 +143,10 @@ object ImageUtils {
     ): Boolean {
         val plane = input.planes[0]
         val format = YuvUtils.fourcc(input.format)
+        val stride = cropWidth * ImageFormat.getBitsPerPixel(input.format) / 8
         val rst = YuvUtils.convertToARGB(
             plane.buffer, plane.buffer.limit(),
-            dest, 0, cropWidth,
+            dest, 0, stride,
             left, top, cropWidth, cropHeight,
             input.width, input.height,
             0, format
@@ -166,10 +168,11 @@ object ImageUtils {
         dest: ByteArray
     ): Boolean {
         val format = YuvUtils.fourcc(input.format)
+        val stride = cropWidth * ImageFormat.getBitsPerPixel(input.format) / 8
         val raw = input.payload
         val rst = YuvUtils.convertToARGB(
             raw, 0, raw.size,
-            dest, 0, cropWidth,
+            dest, 0, stride,
             left, top, cropWidth, cropHeight,
             input.width, input.height,
             0, format

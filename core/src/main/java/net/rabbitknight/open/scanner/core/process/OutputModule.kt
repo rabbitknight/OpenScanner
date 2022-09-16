@@ -5,7 +5,13 @@ import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
-import net.rabbitknight.open.scanner.core.result.*
+import net.rabbitknight.open.scanner.core.result.BarcodeResult
+import net.rabbitknight.open.scanner.core.result.ImageResult
+import net.rabbitknight.open.scanner.core.result.Rect
+import net.rabbitknight.open.scanner.core.result.centerX
+import net.rabbitknight.open.scanner.core.result.centerY
+import net.rabbitknight.open.scanner.core.result.height
+import net.rabbitknight.open.scanner.core.result.width
 import kotlin.math.abs
 import kotlin.math.max
 import kotlin.math.min
@@ -32,7 +38,7 @@ class OutputModule() : BaseModule() {
 
     override fun onProcess(frame: ImageFrame) {
         // 不同engine检测结果去重
-        val mergeResults = mutableListOf<BarcodeResult>()
+        val mergeResults = mutableSetOf<BarcodeResult>()
 
         val allResults = mutableListOf<BarcodeResult>()
 
@@ -42,20 +48,21 @@ class OutputModule() : BaseModule() {
 
         allResults.forEach { result ->
             // 找到相同的两个结果 (可能是不同引擎输出的
-            val index = mergeResults.indexOfFirst {
+            val match = mergeResults.find {
                 it.format == result.format  // 格式相同
                     && it.payload == result.payload // 结果相同
                     && cross(it.rect, result.rect)  // roi框相交
             }
             // 如果可以找到 则合并结果
-            if (index != -1) {
-                val old = mergeResults.removeAt(index)
-                val merge = merge(old.rect, result.rect)
+            val merge = match?.let {
+                val merge = merge(it.rect, result.rect)
                 val replace = BarcodeResult(
                     result.format, merge, result.payload, result.rawBytes
                 )
-                mergeResults.add(replace)
-            }
+                mergeResults.remove(match)
+                replace
+            } ?: result
+            mergeResults.add(merge)
         }
 
         // crop的坐标 转化为 图像的坐标
@@ -78,7 +85,7 @@ class OutputModule() : BaseModule() {
 
         // 结果输出
         val imageResult = ImageResult(
-            code, frame.timestamp, results
+            code, frame.timestamp, results, ""
         )
         val rawImage = frame.raw
         // 帧回调通知

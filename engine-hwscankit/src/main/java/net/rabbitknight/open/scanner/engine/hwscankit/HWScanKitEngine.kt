@@ -4,7 +4,20 @@ import android.content.Context
 import android.graphics.Bitmap
 import com.huawei.hms.hmsscankit.ScanUtil
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions
-import com.huawei.hms.ml.scan.HmsScanBase.*
+import com.huawei.hms.ml.scan.HmsScanBase.ALL_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.AZTEC_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.CODABAR_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.CODE128_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.CODE39_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.CODE93_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.DATAMATRIX_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.EAN13_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.EAN8_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.ITF14_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.PDF417_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.QRCODE_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.UPCCODE_A_SCAN_TYPE
+import com.huawei.hms.ml.scan.HmsScanBase.UPCCODE_E_SCAN_TYPE
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
@@ -50,9 +63,10 @@ class HWScanKitEngine : Engine {
     }
 
     override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
-        val context = context.get() ?: return ImageResult(C.CODE_FAIL, image.timestamp, emptyList())
+        val context =
+            context.get() ?: return ImageResult(C.CODE_FAIL, image.timestamp, emptyList(), name())
         if (image.format != ImageFormat.ARGB) {
-            return ImageResult(C.CODE_FAIL, image.timestamp, emptyList())
+            return ImageResult(C.CODE_FAIL, image.timestamp, emptyList(), name())
         }
         // 缓存拷贝
         if (buffer.capacity() < image.payload.size) {
@@ -68,6 +82,8 @@ class HWScanKitEngine : Engine {
             bitmap.recycle()
             bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
         }
+        bitmap.width = image.width
+        bitmap.height = image.height
         bitmap.copyPixelsFromBuffer(buffer)
 
         // 扫码结果
@@ -85,11 +101,13 @@ class HWScanKitEngine : Engine {
         val code = if (results.isEmpty()) C.CODE_FAIL else C.CODE_SUCCESS
 
         // 包装&输出
-        val result = ImageResult(code, image.timestamp, results)
+        val result = ImageResult(code, image.timestamp, results, name())
         return result
     }
 
     override fun preferImageFormat(): String = ImageFormat.ARGB
+
+    override fun name(): String = "HWScan"
 
     private fun map(format: BarcodeFormat): Int? {
         return when (format) {

@@ -2,6 +2,7 @@ package net.rabbitknight.open.scanner
 
 import android.app.Application
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.OpenScanner
@@ -37,7 +38,10 @@ class DemoApp : Application() {
         val scanner = OpenScanner.create(option, engines)
 
         // 图像创建
-        val bitmap = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
+        val bitmap = assets.open("qrcode/test.1.png").use {
+            BitmapFactory.decodeStream(it)
+        }
+//        val bitmap = Bitmap.createBitmap(120, 120, Bitmap.Config.ARGB_8888)
 
         // 图像封装
         val image = bitmap.wrap(0L) {
