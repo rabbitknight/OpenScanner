@@ -19,16 +19,17 @@ object AssetsLoader {
         val sources = assets.list(assetPath)
         sources?.forEach {
             val out = File(outputDir, it)
+            val fileName = "$assetPath/$it"
             if (!out.exists()) {
                 val ous = FileOutputStream(out)
-                val ins = assets.open("$assetPath/$it")
+                val ins = assets.open(fileName)
                 ins.use {
                     ous.use {
                         ins.copyTo(ous)
                     }
                 }
             }
-            fileMap[it] = out
+            fileMap[fileName] = out
         }
         finished?.invoke()
     }

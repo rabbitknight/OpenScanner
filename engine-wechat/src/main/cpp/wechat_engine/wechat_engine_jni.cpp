@@ -66,10 +66,10 @@ Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_detect(JNIEnv *env
     int *rects = new int[size];
     for (int i = 0; i < points.size(); ++i) {
         auto point = points[i];
-        rects[i * 4 + 0] = point.at<int>(0, 0); // left
-        rects[i * 4 + 1] = point.at<int>(0, 1); // top
-        rects[i * 4 + 2] = point.at<int>(2, 0); // right
-        rects[i * 4 + 3] = point.at<int>(2, 1); // bottom
+        rects[i * 4 + 0] = (int) point.at<float>(0, 0); // left
+        rects[i * 4 + 1] = (int) point.at<float>(0, 1); // top
+        rects[i * 4 + 2] = (int) point.at<float>(2, 0); // right
+        rects[i * 4 + 3] = (int) point.at<float>(2, 1); // bottom
     }
     env->SetIntArrayRegion(result, 0, size, rects);
     return result;
