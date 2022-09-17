@@ -1,17 +1,19 @@
 package net.rabbitknight.open.scanner.core.process
 
 import android.util.Log
-import net.rabbitknight.open.scanner.core.ContextProvider
 import net.rabbitknight.open.scanner.core.ScanResultListener
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.wrap
+import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
-import net.rabbitknight.open.scanner.core.result.*
+import net.rabbitknight.open.scanner.core.result.Rect
+import net.rabbitknight.open.scanner.core.result.centerX
+import net.rabbitknight.open.scanner.core.result.centerY
+import net.rabbitknight.open.scanner.core.result.height
+import net.rabbitknight.open.scanner.core.result.width
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
-import net.rabbitknight.open.scanner.core.utils.download
-import java.io.File
 import java.lang.ref.WeakReference
 
 /**
@@ -24,15 +26,12 @@ import java.lang.ref.WeakReference
  *  + NV21 -> YV12
  * 根据晃动检测模块的开关 判断是否处理图像
  */
-class InputModule() : BaseModule() {
+class InputModule(scanner: ScannerImpl) : BaseModule(scanner) {
     companion object {
         private const val TAG = "InputModule"
     }
 
-    private var config: Config = Config()
-
-    override fun onConfig(config: Config) {
-        this.config = config
+    override fun onConfigChanged(config: Config) {
     }
 
     override fun moduleName(): String = TAG
@@ -41,7 +40,7 @@ class InputModule() : BaseModule() {
      * 图像接入入口
      */
     fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {
-        val config = this.config
+        val config = scanner.getConfig()
 
         // 处理队列判断有无溢出
         val size = getSource().size
@@ -71,7 +70,8 @@ class InputModule() : BaseModule() {
             image,
             frameListener = listener,
             cropRect = cropRect,
-            timestamp = timestamp
+            timestamp = timestamp,
+            inputTs = System.currentTimeMillis()
         )
 
         return getSource().offer(frame)

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.engine.zxing
 
 import android.content.Context
+import android.util.Log
 import com.google.zxing.BinaryBitmap
 import com.google.zxing.DecodeHintType
 import com.google.zxing.MultiFormatReader
@@ -34,6 +35,7 @@ import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
 import java.lang.Math.min
+import kotlin.system.measureTimeMillis
 
 class ZXingEngine() : Engine {
     private var buffer = ByteArray(1024 * 1024 * 1)
@@ -79,23 +81,37 @@ class ZXingEngine() : Engine {
         val width = image.width
         val height = image.height
         val timestamp = image.timestamp
-        // resize buffer
-        buffer.let {
-            val wanted = image.width * image.height
-            if (wanted > buffer.size) buffer = ByteArray(wanted)
+
+        // image prepare
+        val bitmap: BinaryBitmap
+        measureTimeMillis {
+            // resize buffer
+            buffer.let {
+                val wanted = image.width * image.height
+                if (wanted > buffer.size) buffer = ByteArray(wanted)
+            }
+            // to bytebuffer
+            buffer.let {
+                image.planes[0].toByteArray(it, width, height)
+            }
+            bitmap = buffer.let {
+                val source = PlanarYUVLuminanceSource(it, width, height, 0, 0, width, height, false)
+                BinaryBitmap(HybridBinarizer(source))
+            }
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
         }
-        // to bytebuffer
-        buffer.let {
-            image.planes[0].toByteArray(it, width, height)
-        }
-        val bitmap = buffer.let {
-            val source = PlanarYUVLuminanceSource(it, width, height, 0, 0, width, height, false)
-            BinaryBitmap(HybridBinarizer(source))
-        }
-        val result: ImageResult = try {
-            zxingCore.decodeWithState(bitmap).toImageResult(image, timestamp)
-        } catch (e: Exception) {
-            ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
+
+        // image decode
+        val result: ImageResult
+        measureTimeMillis {
+            result = try {
+                zxingCore.decodeWithState(bitmap).toImageResult(image, timestamp)
+            } catch (e: Exception) {
+                ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
+            }
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
         }
         return result
     }

@@ -22,7 +22,7 @@ interface IModule {
     /**
      * 配置修改
      */
-    fun onConfig(config: Config)
+    fun onConfigChanged(config: Config)
 
     /**
      * 处理数据

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.engine.wechat
 
 import android.content.Context
+import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
@@ -10,6 +11,7 @@ import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
+import kotlin.system.measureTimeMillis
 
 /**
  * 从OpenCV WeChatQrcode移植
@@ -52,18 +54,37 @@ class WeChatEngine : Engine {
         val width = image.width
         val height = image.height
         val timestamp = image.timestamp
-        // resize buffer
-        buffer.let {
-            val wanted = image.width * image.height
-            if (wanted > buffer.size) buffer = ByteArray(wanted)
+
+        measureTimeMillis {
+            // resize buffer
+            buffer.let {
+                val wanted = image.width * image.height
+                if (wanted > buffer.size) buffer = ByteArray(wanted)
+            }
+            // to bytebuffer
+            buffer.let {
+                image.planes[0].toByteArray(it, width, height)
+            }
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
         }
-        // to bytebuffer
-        buffer.let {
-            image.planes[0].toByteArray(it, width, height)
-        }
+
         val outRects = mutableListOf<Rect>()
         val outTexts = mutableListOf<String>()
-        qrcodeEngine.decode(buffer, width, height, emptyList(), outRects, outTexts)
+        // 图像检测
+        measureTimeMillis {
+            qrcodeEngine.detect(buffer, width, height, outRects)
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image detect cost ${it}ms")
+        }
+
+        // 图像识别
+        measureTimeMillis {
+            qrcodeEngine.decode(buffer, width, height, emptyList(), outRects, outTexts)
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+        }
+
         if (outTexts.isEmpty()) {
             return ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
         } else {

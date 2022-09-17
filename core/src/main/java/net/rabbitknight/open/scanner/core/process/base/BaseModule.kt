@@ -7,10 +7,17 @@ import net.rabbitknight.open.scanner.core.C.SCHEDULE_PERIOD_MILS
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.config.InitOption
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
+import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.process.ImageFrame
-import java.util.concurrent.*
+import java.util.concurrent.BlockingQueue
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
+import java.util.concurrent.LinkedBlockingQueue
+import java.util.concurrent.ScheduledExecutorService
+import java.util.concurrent.ScheduledFuture
+import java.util.concurrent.TimeUnit
 
-abstract class BaseModule : IModule {
+abstract class BaseModule(val scanner: ScannerImpl) : IModule {
     private var source = LinkedBlockingQueue<ImageFrame>()
     private lateinit var sink: BlockingQueue<ImageFrame>
 
@@ -44,7 +51,7 @@ abstract class BaseModule : IModule {
         executor.shutdown()
     }
 
-    override fun onConfig(config: Config) {
+    override fun onConfigChanged(config: Config) {
     }
 
     protected fun getOption() = initOption

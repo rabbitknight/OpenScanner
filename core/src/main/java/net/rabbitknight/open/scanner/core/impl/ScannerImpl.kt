@@ -11,15 +11,25 @@ import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.process.InputModule
 import net.rabbitknight.open.scanner.core.process.OutputModule
+import net.rabbitknight.open.scanner.core.process.base.BaseModule
 
-class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<out Engine>>) :
+class ScannerImpl(
+    private val initOption: InitOption,
+    private val engines: Array<Class<out Engine>>
+) :
     Scanner {
-    private val inputModule: InputModule = InputModule()
-    private val engineModule = EngineModule(engines)
-    private val outputModule = OutputModule()
+    private val inputModule = InputModule(this)
+    private val engineModule = EngineModule(this)
+    private val outputModule = OutputModule(this)
     private val modules = listOf(inputModule, engineModule, outputModule)
 
     private val cachePoolMap = mutableMapOf<String, ByteArrayPool>()
+
+    private var config = Config()
+
+    internal fun getConfig() = config
+
+    internal fun getEngines() = engines
 
     init {
         // 设置缓存池
@@ -37,7 +47,8 @@ class ScannerImpl(private val initOption: InitOption, val engines: Array<Class<o
     }
 
     override fun config(config: Config) {
-        modules.forEach { it.onConfig(config) }
+        this.config = config
+        modules.forEach { it.onConfigChanged(config) }
     }
 
     override fun process(image: ImageWrapper<Any>, frameListener: ScanResultListener): Boolean {

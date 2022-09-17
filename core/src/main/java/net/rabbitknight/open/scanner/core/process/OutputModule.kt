@@ -1,9 +1,11 @@
 package net.rabbitknight.open.scanner.core.process
 
 import android.os.Handler
+import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.config.Config
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
+import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
@@ -20,7 +22,7 @@ import kotlin.math.min
  * 后处理
  * 1. 检测结果是否复合
  */
-class OutputModule() : BaseModule() {
+class OutputModule(scannerImpl: ScannerImpl) : BaseModule(scannerImpl) {
     companion object {
         private const val TAG = "OutputModule"
     }
@@ -33,7 +35,7 @@ class OutputModule() : BaseModule() {
 
     override fun moduleName(): String = TAG
 
-    override fun onConfig(config: Config) {
+    override fun onConfigChanged(config: Config) {
     }
 
     override fun onProcess(frame: ImageFrame) {
@@ -83,10 +85,16 @@ class OutputModule() : BaseModule() {
             frame.result.first().code
         }
 
+        val cost = frame.let {
+            System.currentTimeMillis() - it.inputTs
+        }
+
         // 结果输出
         val imageResult = ImageResult(
             code, frame.timestamp, results, ""
         )
+        Log.d(TAG, "onProcess: total cost = ${cost}ms")
+
         val rawImage = frame.raw
         // 帧回调通知
         resultListener?.let {

@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.engine.mlkit
 
 import android.content.Context
+import android.util.Log
 import com.google.mlkit.vision.barcode.BarcodeScanner
 import com.google.mlkit.vision.barcode.BarcodeScannerOptions
 import com.google.mlkit.vision.barcode.BarcodeScanning
@@ -15,6 +16,7 @@ import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
 import java.util.concurrent.Executor
+import kotlin.system.measureTimeMillis
 
 class MLKitEngine : Engine {
     private val executor by lazy { DirectExecutor() }
@@ -51,11 +53,24 @@ class MLKitEngine : Engine {
     override fun decode(image: ImageWrapper<ByteArray>): ImageResult {
         val timestamp = image.timestamp
         // 图像转换
-        val inputImage = image.toInputImage()
-        // 任务提交
-        val tasks = scanner.process(inputImage)
-        // 结果获取 (使用DirectExecutor)
-        val barcodes = tasks.result
+        val inputImage: InputImage
+        measureTimeMillis {
+            inputImage = image.toInputImage()
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
+        }
+
+        // 图像识别
+        val barcodes: List<Barcode>
+        measureTimeMillis {
+            // 任务提交
+            val tasks = scanner.process(inputImage)
+            // 结果获取 (使用DirectExecutor)
+            barcodes = tasks.result
+        }.let {
+            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+        }
+
         return barcodes.toImageResult(timestamp)
     }
 

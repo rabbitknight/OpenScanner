@@ -1,12 +1,30 @@
 package net.rabbitknight.open.scanner.engine.zbar
 
 import android.content.Context
+import android.util.Log
 import net.rabbitknight.open.scanner.core.C.CODE_FAIL
 import net.rabbitknight.open.scanner.core.C.CODE_SUCCESS
+import net.rabbitknight.open.scanner.core.C.TAG
 import net.rabbitknight.open.scanner.core.ScannerException
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
-import net.rabbitknight.open.scanner.core.format.BarcodeFormat.*
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.AZTEC
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODABAR
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_128
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_39
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.CODE_93
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.DATA_MATRIX
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.EAN_13
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.EAN_8
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.ITF
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.MAXICODE
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.PDF_417
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.QR_CODE
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.RSS_14
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.RSS_EXPANDED
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_A
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_E
+import net.rabbitknight.open.scanner.core.format.BarcodeFormat.UPC_EAN_EXTENSION
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
@@ -17,6 +35,7 @@ import net.sourceforge.zbar.Config
 import net.sourceforge.zbar.Image
 import net.sourceforge.zbar.ImageScanner
 import net.sourceforge.zbar.Symbol
+import kotlin.system.measureTimeMillis
 
 class ZBarEngine() : Engine {
     private val zbarScanner = ImageScanner().also {
@@ -58,18 +77,31 @@ class ZBarEngine() : Engine {
         val width = image.width
         val height = image.height
         val timestamp = image.timestamp
-        // resize buffer
-        buffer.let {
-            val wanted = image.width * image.height
-            if (wanted > buffer.size) buffer = ByteArray(wanted)
+        // 图像准备
+        measureTimeMillis {
+            // resize buffer
+            buffer.let {
+                val wanted = image.width * image.height
+                if (wanted > buffer.size) buffer = ByteArray(wanted)
+            }
+            // to bytebuffer
+            buffer.let {
+                image.planes[0].toByteArray(it, width, height)
+            }
+            zbarImage.setSize(width, height)
+            zbarImage.setData(buffer)
+        }.let {
+            Log.i(TAG, "${name()} decode: image prepare cost ${it}ms")
         }
-        // to bytebuffer
-        buffer.let {
-            image.planes[0].toByteArray(it, width, height)
+
+        // 图像识别
+        val code: Int
+        measureTimeMillis {
+            code = zbarScanner.scanImage(zbarImage)
+        }.let {
+            Log.i(TAG, "${name()} decode: image decode cost ${it}ms")
         }
-        zbarImage.setSize(width, height)
-        zbarImage.setData(buffer)
-        val code = zbarScanner.scanImage(zbarImage)
+
         if (code != 0) {
             val rawResults = zbarScanner.results
             val barcodeResults = rawResults.mapNotNull {
@@ -85,9 +117,9 @@ class ZBarEngine() : Engine {
                     null
                 }
             }
-            return ImageResult(CODE_SUCCESS, timestamp, barcodeResults,name())
+            return ImageResult(CODE_SUCCESS, timestamp, barcodeResults, name())
         } else {
-            return ImageResult(CODE_FAIL, timestamp, emptyList(),name())
+            return ImageResult(CODE_FAIL, timestamp, emptyList(), name())
         }
     }
 

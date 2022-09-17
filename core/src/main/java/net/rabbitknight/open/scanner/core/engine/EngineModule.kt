@@ -10,31 +10,29 @@ import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.image.WrapperOwner
 import net.rabbitknight.open.scanner.core.image.wrap
+import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import net.rabbitknight.open.scanner.core.process.base.BaseModule
+import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.utils.ImageUtils
-import net.rabbitknight.open.scanner.core.utils.download
-import java.io.File
+import kotlin.system.measureTimeMillis
 
 /**
  * EngineModule 用来完成对引擎的管理，使用引擎来做数据处理
  */
-class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
+class EngineModule(scanner: ScannerImpl) : BaseModule(scanner) {
     companion object {
         private const val TAG = "EngineModule"
     }
 
     private val engineImpls = hashMapOf<Class<out Engine>, Engine>()
 
-    private var config: Config = Config()
-
-
-    override fun onConfig(config: Config) {
-        this.config = config
+    override fun onConfigChanged(config: Config) {
     }
 
     override fun onCreate(option: InitOption) {
         super.onCreate(option)
+        val engines = scanner.getEngines()
         engines.forEach {
             val impl = it.newInstance()
             engineImpls[it] = impl
@@ -53,7 +51,7 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
     }
 
     override fun onProcess(frame: ImageFrame) {
-        val config = this.config
+        val config = scanner.getConfig()
 
         // 解码
         val decode: (Map.Entry<Class<out Engine>, Engine>) -> Boolean = {
@@ -61,23 +59,35 @@ class EngineModule(val engines: Array<Class<out Engine>>) : BaseModule() {
             val clazz = it.key
 
             val wantedFormat = engine.preferImageFormat()
-            // 获取图像
-            val image = frame.cvtImage.getOrPut(wantedFormat) {
-                cvtImage(frame.cropImage, wantedFormat)
+            val image: ImageWrapper<ByteArray>
+
+            // 图像转换
+            measureTimeMillis {
+                image = frame.cvtImage.getOrPut(wantedFormat) {
+                    cvtImage(frame.cropImage, wantedFormat)
+                }
+            }.let {
+                Log.i(
+                    TAG,
+                    "cvt image: ${image.timestamp}, from :${frame.cropImage.format}, to :${wantedFormat}, cost ${it}ms"
+                )
             }
-//            val downloadFile = File(
-//                ContextProvider.context().filesDir,
-//                "${image.format}_${System.currentTimeMillis()}.jpg"
-//            )
-//            image.download(downloadFile)
             // 引擎解码
-            val imageResult = engine.decode(image)
+            val result: ImageResult
+            measureTimeMillis {
+                result = engine.decode(image)
+            }.let {
+                Log.i(
+                    TAG,
+                    "decode image: ${image.timestamp}, with ${engine.name()}, cost ${it}ms"
+                )
+            }
 
             // 添加全部结果
-            frame.result.add(imageResult)
+            frame.result.add(result)
 
             // lambda返回值
-            imageResult.code == C.CODE_SUCCESS
+            result.code == C.CODE_SUCCESS
         }
         if (config.multimode == C.ENGINE_MUTIMODE_ALL) {
             engineImpls.count(decode)

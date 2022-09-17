@@ -2,7 +2,9 @@ package net.rabbitknight.open.scanner.engine.hwscankit
 
 import android.content.Context
 import android.graphics.Bitmap
+import android.util.Log
 import com.huawei.hms.hmsscankit.ScanUtil
+import com.huawei.hms.ml.scan.HmsScan
 import com.huawei.hms.ml.scan.HmsScanAnalyzerOptions
 import com.huawei.hms.ml.scan.HmsScanBase.ALL_SCAN_TYPE
 import com.huawei.hms.ml.scan.HmsScanBase.AZTEC_SCAN_TYPE
@@ -19,6 +21,7 @@ import com.huawei.hms.ml.scan.HmsScanBase.QRCODE_SCAN_TYPE
 import com.huawei.hms.ml.scan.HmsScanBase.UPCCODE_A_SCAN_TYPE
 import com.huawei.hms.ml.scan.HmsScanBase.UPCCODE_E_SCAN_TYPE
 import net.rabbitknight.open.scanner.core.C
+import net.rabbitknight.open.scanner.core.C.TAG
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.image.ImageFormat
@@ -28,6 +31,7 @@ import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
 import java.lang.ref.WeakReference
 import java.nio.ByteBuffer
+import kotlin.system.measureTimeMillis
 
 class HWScanKitEngine : Engine {
     private lateinit var context: WeakReference<Context>
@@ -68,26 +72,37 @@ class HWScanKitEngine : Engine {
         if (image.format != ImageFormat.ARGB) {
             return ImageResult(C.CODE_FAIL, image.timestamp, emptyList(), name())
         }
-        // 缓存拷贝
-        if (buffer.capacity() < image.payload.size) {
-            buffer = ByteBuffer.allocate(image.payload.size)
-        }
-        buffer.let {
-            it.position(0)
-            it.put(image.payload)
-            it.position(0)
-        }
-        // bitmap 构造
-        if (bitmap.allocationByteCount < image.width * image.height * 4) {
-            bitmap.recycle()
-            bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
-        }
-        bitmap.width = image.width
-        bitmap.height = image.height
-        bitmap.copyPixelsFromBuffer(buffer)
 
-        // 扫码结果
-        val hmsScans = ScanUtil.decodeWithBitmap(context, bitmap, option)
+        // image prepare
+        measureTimeMillis {
+            // 缓存拷贝
+            if (buffer.capacity() < image.payload.size) {
+                buffer = ByteBuffer.allocate(image.payload.size)
+            }
+            buffer.let {
+                it.position(0)
+                it.put(image.payload)
+                it.position(0)
+            }
+            // bitmap 构造
+            if (bitmap.allocationByteCount < image.width * image.height * 4) {
+                bitmap.recycle()
+                bitmap = Bitmap.createBitmap(image.width, image.height, Bitmap.Config.ARGB_8888)
+            }
+            bitmap.width = image.width
+            bitmap.height = image.height
+            bitmap.copyPixelsFromBuffer(buffer)
+        }.let {
+            Log.i(TAG, "${name()} decode: image prepare cost ${it}ms")
+        }
+
+        // image decode
+        val hmsScans: Array<HmsScan>?
+        measureTimeMillis {
+            hmsScans = ScanUtil.decodeWithBitmap(context, bitmap, option)
+        }.let {
+            Log.i(TAG, "${name()} decode: image decode cost ${it}ms")
+        }
         // 结果转换
         val results = hmsScans?.map {
             val rect = it.borderRect.let { border ->
@@ -101,8 +116,7 @@ class HWScanKitEngine : Engine {
         val code = if (results.isEmpty()) C.CODE_FAIL else C.CODE_SUCCESS
 
         // 包装&输出
-        val result = ImageResult(code, image.timestamp, results, name())
-        return result
+        return ImageResult(code, image.timestamp, results, name())
     }
 
     override fun preferImageFormat(): String = ImageFormat.ARGB

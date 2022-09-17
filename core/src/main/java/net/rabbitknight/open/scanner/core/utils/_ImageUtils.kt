@@ -12,6 +12,11 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
+//            val downloadFile = File(
+//                ContextProvider.context().filesDir,
+//                "${image.format}_${System.currentTimeMillis()}.jpg"
+//            )
+//            image.download(downloadFile)
 @WorkerThread
 internal fun <T : Any> ImageWrapper<T>.download(file: File): Boolean {
     if (payload !is ByteArray) {

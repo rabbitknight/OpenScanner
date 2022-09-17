@@ -49,6 +49,11 @@ data class ImageFrame(
      * 该帧检测结果
      */
     val result: MutableList<ImageResult> = mutableListOf(),
+
+    /**
+     * 构造时间错
+     */
+    internal val inputTs: Long
 )
 
 
