@@ -115,3 +115,25 @@ Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_decode(JNIEnv *env
     auto text = res_texts[0];
     return env->NewStringUTF(text.c_str());
 }
+
+extern "C"
+JNIEXPORT jboolean JNICALL
+Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_setScaleFactor(JNIEnv *env,
+                                                                             jobject thiz,
+                                                                             jlong peer,
+                                                                             jfloat factor) {
+    if (0 == peer) return false;
+    auto *qrcode = (WeChatEngine *) peer;
+    qrcode->setScaleFactor(factor);
+    return true;
+}
+
+extern "C"
+JNIEXPORT jfloat JNICALL
+Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_getScaleFactor(JNIEnv *env,
+                                                                             jobject thiz,
+                                                                             jlong peer) {
+    if (0 == peer) return -1.0f;
+    auto *qrcode = (WeChatEngine *) peer;
+    return qrcode->getScaleFactor();
+}

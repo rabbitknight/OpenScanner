@@ -43,6 +43,7 @@ public:
     std::shared_ptr<SSDDetector> detector_;
     std::shared_ptr<SuperScale> super_resolution_model_;
     bool use_nn_detector_, use_nn_sr_;
+    float scaleFactor = -1.f;
 };
 
 WeChatQRCode::WeChatQRCode(const String& detector_prototxt_path,
@@ -109,6 +110,17 @@ vector<string> WeChatQRCode::detectAndDecode(InputArray img, OutputArrayOfArrays
         points.assign(tmp_points);
     }
     return ret;
+}
+
+void WeChatQRCode::setScaleFactor(float _scaleFactor) {
+    if (_scaleFactor > 0 && _scaleFactor <= 1.f)
+        p->scaleFactor = _scaleFactor;
+    else
+        p->scaleFactor = -1.f;
+};
+
+float WeChatQRCode::getScaleFactor() {
+    return p->scaleFactor;
 };
 
 vector<string> WeChatQRCode::Impl::decode(const Mat& img, vector<Mat>& candidate_points,
@@ -119,8 +131,8 @@ vector<string> WeChatQRCode::Impl::decode(const Mat& img, vector<Mat>& candidate
     vector<string> decode_results;
     for (auto& point : candidate_points) {
         Mat cropped_img;
+        Align aligner;
         if (use_nn_detector_) {
-            Align aligner;
             cropped_img = cropObj(img, point, aligner);
         } else {
             cropped_img = img;
@@ -132,9 +144,19 @@ vector<string> WeChatQRCode::Impl::decode(const Mat& img, vector<Mat>& candidate
                 super_resolution_model_->processImageScale(cropped_img, cur_scale, use_nn_sr_);
             string result;
             DecoderMgr decodemgr;
-            auto ret = decodemgr.decodeImage(scaled_img, use_nn_detector_, result);
-
+            vector<Point2f> points_qr;
+            auto ret = decodemgr.decodeImage(scaled_img, use_nn_detector_, result, points_qr);
             if (ret == 0) {
+                for (auto&& pt: points_qr) {
+                    pt /= cur_scale;
+                }
+
+                if (use_nn_detector_)
+                    points_qr = aligner.warpBack(points_qr);
+                for (int i = 0; i < 4; ++i) {
+                    point.at<float>(i, 0) = points_qr[i].x;
+                    point.at<float>(i, 1) = points_qr[i].y;
+                }
                 decode_results.push_back(result);
                 points.push_back(point);
                 break;
@@ -173,11 +195,11 @@ int WeChatQRCode::Impl::applyDetector(const Mat& img, vector<Mat>& points) {
     int img_w = img.cols;
     int img_h = img.rows;
 
+    const float targetArea = 400.f * 400.f;
     // hard code input size
-    int minInputSize = 400;
-    float resizeRatio = sqrt(img_w * img_h * 1.0 / (minInputSize * minInputSize));
-    int detect_width = img_w / resizeRatio;
-    int detect_height = img_h / resizeRatio;
+    const float tmpScaleFactor = scaleFactor == -1.f ? min(1.f, sqrt(targetArea / (img_w * img_h))) : scaleFactor;
+    int detect_width = img_w * tmpScaleFactor;
+    int detect_height = img_h * tmpScaleFactor;
 
     points = detector_->forward(img, detect_width, detect_height);
 

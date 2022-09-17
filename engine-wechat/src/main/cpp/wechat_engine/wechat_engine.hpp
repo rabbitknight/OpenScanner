@@ -53,12 +53,29 @@ namespace cv {
             std::vector<std::string>
             detectAndDecode(InputArray img, OutputArrayOfArrays points = noArray());
 
+
             /**
-        * @brief detect QR codes from the given image
-        *
-        * @param img supports grayscale or color (BGR) image.
-        * @return vector<Mat> detected QR code bounding boxes.
-        */
+            * @brief set scale factor
+            * QR code detector use neural network to detect QR.
+            * Before running the neural network, the input image is pre-processed by scaling.
+            * By default, the input image is scaled to an image with an area of 160000 pixels.
+            * The scale factor allows to use custom scale the input image:
+            * width = scaleFactor*width
+            * height = scaleFactor*width
+            *
+            * scaleFactor valuse must be > 0 and <= 1, otherwise the scaleFactor value is set to -1
+            * and use default scaled to an image with an area of 160000 pixels.
+            */
+            CV_WRAP void setScaleFactor(float _scalingFactor);
+
+            CV_WRAP float getScaleFactor();
+
+            /**
+            * @brief detect QR codes from the given image
+            *
+            * @param img supports grayscale or color (BGR) image.
+            * @return vector<Mat> detected QR code bounding boxes.
+            */
             std::vector<Mat> detect(const Mat &img);
 
             /**

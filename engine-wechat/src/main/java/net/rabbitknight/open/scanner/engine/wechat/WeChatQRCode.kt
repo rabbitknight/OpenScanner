@@ -86,6 +86,28 @@ class WeChatQRCode {
     }
 
     /**
+     * @brief set scale factor
+     * QR code detector use neural network to detect QR.
+     * Before running the neural network, the input image is pre-processed by scaling.
+     * By default, the input image is scaled to an image with an area of 160000 pixels.
+     * The scale factor allows to use custom scale the input image:
+     * width = scaleFactor*width
+     * height = scaleFactor*width
+     *
+     * scaleFactor valuse must be > 0 and <= 1, otherwise the scaleFactor value is set to -1
+     * and use default scaled to an image with an area of 160000 pixels.
+     */
+    fun setScaleFactor(factor: Float): Boolean {
+        if (peer == 0L) return false
+        return setScaleFactor(peer, factor)
+    }
+
+    fun getScaleFactor(): Float {
+        if (peer == 0L) return -1.0f
+        return getScaleFactor(peer)
+    }
+
+    /**
      * 释放解码器资源
      * 一旦调用这个方法 将不能再被使用
      */
@@ -126,6 +148,10 @@ class WeChatQRCode {
         height: Int,
         candidate_point: IntArray
     ): String?
+
+    private external fun setScaleFactor(peer: Long, factor: Float): Boolean
+
+    private external fun getScaleFactor(peer: Long): Float
 
     // endregion Native Bridge
 
