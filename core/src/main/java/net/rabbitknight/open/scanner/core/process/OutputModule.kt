@@ -93,7 +93,7 @@ class OutputModule(scannerImpl: ScannerImpl) : BaseModule(scannerImpl) {
         val imageResult = ImageResult(
             code, frame.timestamp, results, ""
         )
-        Log.d(TAG, "onProcess: total cost = ${cost}ms")
+        Log.d(TAG, "output: total cost = ${cost}ms")
 
         val rawImage = frame.raw
         // 帧回调通知

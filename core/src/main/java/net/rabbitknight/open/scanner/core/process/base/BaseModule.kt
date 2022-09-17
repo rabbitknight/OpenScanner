@@ -99,7 +99,7 @@ abstract class BaseModule(val scanner: ScannerImpl) : IModule {
         val frame: ImageFrame? = try {
             source.take()
         } catch (e: Exception) {
-            Log.e(moduleName(), "take frame err: ", e)
+            Log.w(moduleName(), "take frame err: ", e)
             null
         }
         frame ?: return@Runnable
@@ -108,7 +108,7 @@ abstract class BaseModule(val scanner: ScannerImpl) : IModule {
             // 处理
             onProcess(frame)
         } catch (e: Exception) {
-            Log.e(moduleName(), "process frame err: ", e)
+            Log.w(moduleName(), "process frame err: ", e)
         }
     }
 }

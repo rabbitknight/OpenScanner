@@ -45,4 +45,11 @@ dependencies {
     implementation project(":engine-wechat")
     implementation project(":engine-zbar")
     implementation project(":engine-zxing")
+
+    // glide
+    implementation 'com.github.bumptech.glide:glide:4.13.2'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.13.2'
+
+    // image selector
+    implementation 'io.github.lucksiege:pictureselector:v3.10.6'
 }

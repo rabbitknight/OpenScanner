@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="net.rabbitknight.open.scanner">
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".DemoApp"
         android:allowBackup="true"
@@ -10,6 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OpenScanner">
+        <activity
+            android:name=".PickerActivity"
+            android:exported="false" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
