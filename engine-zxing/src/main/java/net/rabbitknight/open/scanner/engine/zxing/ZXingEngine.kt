@@ -171,7 +171,7 @@ class ZXingEngine() : Engine {
             Rect(left, top, right, bottom)
         } ?: Rect(0, 0, image.width, image.height)
         val barcodeResult = BarcodeResult(
-            format, rect, this.text, this.text.toByteArray()
+            format, rect, this.text, this.rawBytes
         )
         return ImageResult(C.CODE_SUCCESS, timestamp, listOf(barcodeResult), name())
     }

@@ -74,7 +74,7 @@ class HWScanKitEngine : Engine {
         }
         buffer.let {
             it.position(0)
-            it.get(image.payload)
+            it.put(image.payload)
             it.position(0)
         }
         // bitmap 构造

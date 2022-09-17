@@ -4,6 +4,7 @@ import android.graphics.Bitmap
 import android.graphics.Rect
 import android.graphics.YuvImage
 import android.util.Log
+import androidx.annotation.WorkerThread
 import net.rabbitknight.open.scanner.core.TAG
 import net.rabbitknight.open.scanner.core.image.ImageFormat
 import net.rabbitknight.open.scanner.core.image.ImageWrapper
@@ -11,6 +12,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.nio.ByteBuffer
 
+@WorkerThread
 internal fun <T : Any> ImageWrapper<T>.download(file: File): Boolean {
     if (payload !is ByteArray) {
         Log.w(TAG, "download: $this fail, only support ByteArray")
@@ -54,4 +56,14 @@ internal fun <T : Any> ImageWrapper<T>.download(file: File): Boolean {
         }
     }
     return true
+}
+
+@WorkerThread
+internal fun Bitmap.download(file: File): Boolean {
+    val os = FileOutputStream(file)
+    val rst = os.use {
+        this.compress(Bitmap.CompressFormat.JPEG, 100, it)
+    }
+    if (!rst) Log.w(TAG, "download: compress fail")
+    return rst
 }
