@@ -74,13 +74,22 @@ class WeChatQRCode {
             result
         }
         // decode every roi to get barcode
-        rects.forEach {
-            val candidate_point = intArrayOf(it.left, it.top, it.right, it.bottom)
-            val text = decode(peer, image, width, height, candidate_point)
-            if (text != null) {
-                outRects.add(it)
-                outTexts.add(text)
-            }
+        val candidate_points = IntArray(rects.size * 4);
+        rects.forEachIndexed { index, rect ->
+            candidate_points[index * 4 + 0] = rect.left
+            candidate_points[index * 4 + 1] = rect.top
+            candidate_points[index * 4 + 2] = rect.right
+            candidate_points[index * 4 + 3] = rect.bottom
+        }
+        val res_points = IntArray(rects.size * 4)
+        val texts = decode(peer, image, width, height, candidate_points, rects.size, res_points)
+        texts?.forEachIndexed { index, s ->
+            val left = res_points[index * 4 + 0]
+            val top = res_points[index * 4 + 1]
+            val right = res_points[index * 4 + 2]
+            val bottom = res_points[index * 4 + 3]
+            outRects.add(Rect(left, top, right, bottom))
+            outTexts.add(s.toString())
         }
         return true
     }
@@ -146,8 +155,10 @@ class WeChatQRCode {
         image: ByteArray,
         width: Int,
         height: Int,
-        candidate_point: IntArray
-    ): String?
+        candidate_points: IntArray,
+        candidate_size: Int,
+        res_points: IntArray,
+    ): Array<String>?
 
     private external fun setScaleFactor(peer: Long, factor: Float): Boolean
 

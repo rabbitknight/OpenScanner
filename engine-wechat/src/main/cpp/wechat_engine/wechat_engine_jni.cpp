@@ -6,6 +6,7 @@
 // Copyright (C) 2020 THL A29 Limited, a Tencent company. All rights reserved.
 #include "wechat_engine.hpp"
 #include <jni.h>
+#include "wechat_helper.h"
 
 using namespace cv::wechat_qrcode;
 using namespace std;
@@ -76,44 +77,63 @@ Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_detect(JNIEnv *env
 }
 
 extern "C"
-JNIEXPORT jstring JNICALL
+JNIEXPORT jobjectArray JNICALL
 Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_decode(JNIEnv *env, jobject thiz,
                                                                      jlong peer, jbyteArray image,
                                                                      jint width, jint height,
-                                                                     jintArray candidate_point) {
+                                                                     jintArray candidate_points,
+                                                                     jint candidate_size,
+                                                                     jintArray res_points) {
     if (0 == peer) return nullptr;
     auto *qrcode = (WeChatEngine *) peer;
     auto *buffer = env->GetByteArrayElements(image, NULL);
     // cvt bytebuffer to Mat
     cv::Mat gray = cv::Mat(width, height, CV_8UC1, buffer);
     // cvt candidate_points
-    auto *rect = env->GetIntArrayElements(candidate_point, NULL);
-    auto point = cv::Mat(4, 2, CV_32FC1);
-    int left = rect[0];
-    int top = rect[1];
-    int right = rect[2];
-    int bottom = rect[3];
-    point.at<float>(0, 0) = left;
-    point.at<float>(0, 1) = top;
-    point.at<float>(1, 0) = right;
-    point.at<float>(1, 1) = top;
-    point.at<float>(2, 0) = right;
-    point.at<float>(2, 1) = bottom;
-    point.at<float>(3, 0) = left;
-    point.at<float>(3, 1) = bottom;
-    env->ReleaseIntArrayElements(candidate_point, rect, 0);
+    auto *rect = env->GetIntArrayElements(candidate_points, NULL);
     auto points = vector<cv::Mat>();
-    points.push_back(point);
+    for (int i = 0; i < candidate_size; ++i) {
+        auto point = cv::Mat(4, 2, CV_32FC1);
+        auto left = (float) rect[i * 4 + 0];
+        auto top = (float) rect[i * 4 + 1];
+        auto right = (float) rect[i * 4 + 2];
+        auto bottom = (float) rect[i * 4 + 3];
+        point.at<float>(0, 0) = left;
+        point.at<float>(0, 1) = top;
+        point.at<float>(1, 0) = right;
+        point.at<float>(1, 1) = top;
+        point.at<float>(2, 0) = right;
+        point.at<float>(2, 1) = bottom;
+        point.at<float>(3, 0) = left;
+        point.at<float>(3, 1) = bottom;
+        points.push_back(point);
+    }
+    env->ReleaseIntArrayElements(candidate_points, rect, 0);
     // decode
-    auto res_points = vector<cv::Mat>();
-    auto res_texts = qrcode->decode(gray, points, res_points);
+    auto _res_points = vector<cv::Mat>();
+    auto _res_texts = qrcode->decode(gray, points, _res_points);
     // release bytebuffer
     env->ReleaseByteArrayElements(image, buffer, 0);
 
     // cvt result
-    if (res_points.empty() || res_texts.empty()) return nullptr;
-    auto text = res_texts[0];
-    return env->NewStringUTF(text.c_str());
+    auto size = _res_texts.size();
+    if (_res_points.empty() || _res_texts.empty()) return nullptr;
+    auto texts = env->NewObjectArray(size, env->FindClass("java/lang/String"),
+                                     env->NewStringUTF(""));
+    int *rects = new int[size];
+    for (int i = 0; i < size; ++i) {
+        // set text
+        auto text = _res_texts[i];
+        env->SetObjectArrayElement(texts, i, env->NewStringUTF(text.c_str()));
+        // set point
+        auto point = points[i];
+        rects[i * 4 + 0] = (int) point.at<float>(0, 0); // left
+        rects[i * 4 + 1] = (int) point.at<float>(0, 1); // top
+        rects[i * 4 + 2] = (int) point.at<float>(2, 0); // right
+        rects[i * 4 + 3] = (int) point.at<float>(2, 1); // bottom
+    }
+    env->SetIntArrayRegion(res_points, 0, size, rects);
+    return texts;
 }
 
 extern "C"

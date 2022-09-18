@@ -1,5 +1,7 @@
 package net.rabbitknight.open.scanner.core.process.base
 
+import android.os.Process
+import android.os.Process.THREAD_PRIORITY_URGENT_AUDIO
 import android.util.Log
 import androidx.annotation.CallSuper
 import net.rabbitknight.open.scanner.core.C
@@ -10,7 +12,6 @@ import net.rabbitknight.open.scanner.core.image.pool.ByteArrayPool
 import net.rabbitknight.open.scanner.core.impl.ScannerImpl
 import net.rabbitknight.open.scanner.core.process.ImageFrame
 import java.util.concurrent.BlockingQueue
-import java.util.concurrent.Executor
 import java.util.concurrent.Executors
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.ScheduledExecutorService
@@ -95,6 +96,7 @@ abstract class BaseModule(val scanner: ScannerImpl) : IModule {
     private val processThread = Runnable {
         // 线程重命名
         Thread.currentThread().name = C.TAG.substring(0, 4) + ":" + moduleName()
+        Process.setThreadPriority(THREAD_PRIORITY_URGENT_AUDIO)
 
         val frame: ImageFrame? = try {
             source.take()
