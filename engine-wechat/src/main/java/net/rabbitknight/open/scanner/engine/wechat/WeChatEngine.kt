@@ -71,16 +71,17 @@ class WeChatEngine : Engine {
 
         val outRects = mutableListOf<Rect>()
         val outTexts = mutableListOf<String>()
+        val rois = mutableListOf<Rect>()
         // 图像检测
         measureTimeMillis {
-            qrcodeEngine.detect(buffer, width, height, outRects)
+            qrcodeEngine.detect(buffer, width, height, rois)
         }.let {
             Log.i(C.TAG, "${name()} decode: image detect cost ${it}ms")
         }
 
         // 图像识别
         measureTimeMillis {
-            qrcodeEngine.decode(buffer, width, height, emptyList(), outRects, outTexts)
+            qrcodeEngine.decode(buffer, width, height, rois, outRects, outTexts)
         }.let {
             Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
         }
