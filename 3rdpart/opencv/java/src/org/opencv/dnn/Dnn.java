@@ -29,7 +29,8 @@ public class Dnn {
             DNN_BACKEND_OPENCV = 0+3,
             DNN_BACKEND_VKCOM = 0+4,
             DNN_BACKEND_CUDA = 0+5,
-            DNN_BACKEND_WEBNN = 0+6;
+            DNN_BACKEND_WEBNN = 0+6,
+            DNN_BACKEND_TIMVX = 0+7;
 
 
     // C++: enum SoftNMSMethod (cv.dnn.SoftNMSMethod)
@@ -48,7 +49,8 @@ public class Dnn {
             DNN_TARGET_FPGA = 0+5,
             DNN_TARGET_CUDA = 0+6,
             DNN_TARGET_CUDA_FP16 = 0+7,
-            DNN_TARGET_HDDL = 0+8;
+            DNN_TARGET_HDDL = 0+8,
+            DNN_TARGET_NPU = 0+9;
 
 
     //
@@ -1046,9 +1048,12 @@ public class Dnn {
      *
      * See values of {@code CV_DNN_BACKEND_INFERENCE_ENGINE_*} macros.
      *
-     * Default value is controlled through {@code OPENCV_DNN_BACKEND_INFERENCE_ENGINE_TYPE} runtime parameter (environment variable).
+     * {@code OPENCV_DNN_BACKEND_INFERENCE_ENGINE_TYPE} runtime parameter (environment variable) is ignored since 4.6.0.
+     *
+     * @deprecated
      * @return automatically generated
      */
+    @Deprecated
     public static String getInferenceEngineBackendType() {
         return getInferenceEngineBackendType_0();
     }
@@ -1064,8 +1069,11 @@ public class Dnn {
      * See values of {@code CV_DNN_BACKEND_INFERENCE_ENGINE_*} macros.
      *
      * @return previous value of internal backend API
+     *
+     * @deprecated
      * @param newBackendType automatically generated
      */
+    @Deprecated
     public static String setInferenceEngineBackendType(String newBackendType) {
         return setInferenceEngineBackendType_0(newBackendType);
     }

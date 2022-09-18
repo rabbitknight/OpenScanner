@@ -146,7 +146,7 @@ public class Net {
 
 
     //
-    // C++:  Ptr_Layer cv::dnn::Net::getLayer(LayerId layerId)
+    // C++:  Ptr_Layer cv::dnn::Net::getLayer(int layerId)
     //
 
     /**
@@ -154,8 +154,40 @@ public class Net {
      * @param layerId automatically generated
      * @return automatically generated
      */
+    public Layer getLayer(int layerId) {
+        return Layer.__fromPtr__(getLayer_0(nativeObj, layerId));
+    }
+
+
+    //
+    // C++:  Ptr_Layer cv::dnn::Net::getLayer(String layerName)
+    //
+
+    /**
+     *
+     * @deprecated Use int getLayerId(const String &amp;layer)
+     * @param layerName automatically generated
+     * @return automatically generated
+     */
+    @Deprecated
+    public Layer getLayer(String layerName) {
+        return Layer.__fromPtr__(getLayer_1(nativeObj, layerName));
+    }
+
+
+    //
+    // C++:  Ptr_Layer cv::dnn::Net::getLayer(LayerId layerId)
+    //
+
+    /**
+     *
+     * @deprecated to be removed
+     * @param layerId automatically generated
+     * @return automatically generated
+     */
+    @Deprecated
     public Layer getLayer(DictValue layerId) {
-        return Layer.__fromPtr__(getLayer_0(nativeObj, layerId.getNativeObjAddr()));
+        return Layer.__fromPtr__(getLayer_2(nativeObj, layerId.getNativeObjAddr()));
     }
 
 
@@ -474,7 +506,7 @@ public class Net {
 
 
     //
-    // C++:  void cv::dnn::Net::setParam(LayerId layer, int numParam, Mat blob)
+    // C++:  void cv::dnn::Net::setParam(int layer, int numParam, Mat blob)
     //
 
     /**
@@ -486,13 +518,22 @@ public class Net {
      * <b>Note:</b> If shape of the new blob differs from the previous shape,
      * then the following forward pass may fail.
      */
-    public void setParam(DictValue layer, int numParam, Mat blob) {
-        setParam_0(nativeObj, layer.getNativeObjAddr(), numParam, blob.nativeObj);
+    public void setParam(int layer, int numParam, Mat blob) {
+        setParam_0(nativeObj, layer, numParam, blob.nativeObj);
     }
 
 
     //
-    // C++:  Mat cv::dnn::Net::getParam(LayerId layer, int numParam = 0)
+    // C++:  void cv::dnn::Net::setParam(String layerName, int numParam, Mat blob)
+    //
+
+    public void setParam(String layerName, int numParam, Mat blob) {
+        setParam_1(nativeObj, layerName, numParam, blob.nativeObj);
+    }
+
+
+    //
+    // C++:  Mat cv::dnn::Net::getParam(int layer, int numParam = 0)
     //
 
     /**
@@ -502,8 +543,8 @@ public class Net {
      * SEE: Layer::blobs
      * @return automatically generated
      */
-    public Mat getParam(DictValue layer, int numParam) {
-        return new Mat(getParam_0(nativeObj, layer.getNativeObjAddr(), numParam));
+    public Mat getParam(int layer, int numParam) {
+        return new Mat(getParam_0(nativeObj, layer, numParam));
     }
 
     /**
@@ -512,8 +553,21 @@ public class Net {
      * SEE: Layer::blobs
      * @return automatically generated
      */
-    public Mat getParam(DictValue layer) {
-        return new Mat(getParam_1(nativeObj, layer.getNativeObjAddr()));
+    public Mat getParam(int layer) {
+        return new Mat(getParam_1(nativeObj, layer));
+    }
+
+
+    //
+    // C++:  Mat cv::dnn::Net::getParam(String layerName, int numParam = 0)
+    //
+
+    public Mat getParam(String layerName, int numParam) {
+        return new Mat(getParam_2(nativeObj, layerName, numParam));
+    }
+
+    public Mat getParam(String layerName) {
+        return new Mat(getParam_3(nativeObj, layerName));
     }
 
 
@@ -523,6 +577,8 @@ public class Net {
 
     /**
      * Returns indexes of layers with unconnected outputs.
+     *
+     * FIXIT: Rework API to registerOutput() approach, deprecate this call
      * @return automatically generated
      */
     public MatOfInt getUnconnectedOutLayers() {
@@ -536,6 +592,8 @@ public class Net {
 
     /**
      * Returns names of layers with unconnected outputs.
+     *
+     * FIXIT: Rework API to registerOutput() approach, deprecate this call
      * @return automatically generated
      */
     public List<String> getUnconnectedOutLayersNames() {
@@ -731,8 +789,14 @@ public class Net {
     // C++:  vector_String cv::dnn::Net::getLayerNames()
     private static native List<String> getLayerNames_0(long nativeObj);
 
+    // C++:  Ptr_Layer cv::dnn::Net::getLayer(int layerId)
+    private static native long getLayer_0(long nativeObj, int layerId);
+
+    // C++:  Ptr_Layer cv::dnn::Net::getLayer(String layerName)
+    private static native long getLayer_1(long nativeObj, String layerName);
+
     // C++:  Ptr_Layer cv::dnn::Net::getLayer(LayerId layerId)
-    private static native long getLayer_0(long nativeObj, long layerId_nativeObj);
+    private static native long getLayer_2(long nativeObj, long layerId_nativeObj);
 
     // C++:  void cv::dnn::Net::connect(String outPin, String inpPin)
     private static native void connect_0(long nativeObj, String outPin, String inpPin);
@@ -778,12 +842,19 @@ public class Net {
     private static native void setInput_2(long nativeObj, long blob_nativeObj, String name);
     private static native void setInput_3(long nativeObj, long blob_nativeObj);
 
-    // C++:  void cv::dnn::Net::setParam(LayerId layer, int numParam, Mat blob)
-    private static native void setParam_0(long nativeObj, long layer_nativeObj, int numParam, long blob_nativeObj);
+    // C++:  void cv::dnn::Net::setParam(int layer, int numParam, Mat blob)
+    private static native void setParam_0(long nativeObj, int layer, int numParam, long blob_nativeObj);
 
-    // C++:  Mat cv::dnn::Net::getParam(LayerId layer, int numParam = 0)
-    private static native long getParam_0(long nativeObj, long layer_nativeObj, int numParam);
-    private static native long getParam_1(long nativeObj, long layer_nativeObj);
+    // C++:  void cv::dnn::Net::setParam(String layerName, int numParam, Mat blob)
+    private static native void setParam_1(long nativeObj, String layerName, int numParam, long blob_nativeObj);
+
+    // C++:  Mat cv::dnn::Net::getParam(int layer, int numParam = 0)
+    private static native long getParam_0(long nativeObj, int layer, int numParam);
+    private static native long getParam_1(long nativeObj, int layer);
+
+    // C++:  Mat cv::dnn::Net::getParam(String layerName, int numParam = 0)
+    private static native long getParam_2(long nativeObj, String layerName, int numParam);
+    private static native long getParam_3(long nativeObj, String layerName);
 
     // C++:  vector_int cv::dnn::Net::getUnconnectedOutLayers()
     private static native long getUnconnectedOutLayers_0(long nativeObj);

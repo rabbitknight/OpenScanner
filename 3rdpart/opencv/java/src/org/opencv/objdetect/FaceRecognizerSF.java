@@ -8,7 +8,9 @@ import org.opencv.objdetect.FaceRecognizerSF;
 
 // C++: class FaceRecognizerSF
 /**
- * DNN-based face recognizer, model download link: https://drive.google.com/file/d/1ClK9WiB492c5OZFKveF3XiHCejoOxINW/view.
+ * DNN-based face recognizer
+ *
+ * model download link: https://github.com/opencv/opencv_zoo/tree/master/models/face_recognition_sface
  */
 public class FaceRecognizerSF {
 
@@ -56,28 +58,28 @@ public class FaceRecognizerSF {
 
 
     //
-    // C++:  double cv::FaceRecognizerSF::match(Mat _face_feature1, Mat _face_feature2, int dis_type = FaceRecognizerSF::FR_COSINE)
+    // C++:  double cv::FaceRecognizerSF::match(Mat face_feature1, Mat face_feature2, int dis_type = FaceRecognizerSF::FR_COSINE)
     //
 
     /**
      * Calculating the distance between two face features
-     * @param _face_feature1 the first input feature
-     * @param _face_feature2 the second input feature of the same size and the same type as _face_feature1
+     * @param face_feature1 the first input feature
+     * @param face_feature2 the second input feature of the same size and the same type as face_feature1
      * @param dis_type defining the similarity with optional values "FR_OSINE" or "FR_NORM_L2"
      * @return automatically generated
      */
-    public double match(Mat _face_feature1, Mat _face_feature2, int dis_type) {
-        return match_0(nativeObj, _face_feature1.nativeObj, _face_feature2.nativeObj, dis_type);
+    public double match(Mat face_feature1, Mat face_feature2, int dis_type) {
+        return match_0(nativeObj, face_feature1.nativeObj, face_feature2.nativeObj, dis_type);
     }
 
     /**
      * Calculating the distance between two face features
-     * @param _face_feature1 the first input feature
-     * @param _face_feature2 the second input feature of the same size and the same type as _face_feature1
+     * @param face_feature1 the first input feature
+     * @param face_feature2 the second input feature of the same size and the same type as face_feature1
      * @return automatically generated
      */
-    public double match(Mat _face_feature1, Mat _face_feature2) {
-        return match_1(nativeObj, _face_feature1.nativeObj, _face_feature2.nativeObj);
+    public double match(Mat face_feature1, Mat face_feature2) {
+        return match_1(nativeObj, face_feature1.nativeObj, face_feature2.nativeObj);
     }
 
 
@@ -132,9 +134,9 @@ public class FaceRecognizerSF {
     // C++:  void cv::FaceRecognizerSF::feature(Mat aligned_img, Mat& face_feature)
     private static native void feature_0(long nativeObj, long aligned_img_nativeObj, long face_feature_nativeObj);
 
-    // C++:  double cv::FaceRecognizerSF::match(Mat _face_feature1, Mat _face_feature2, int dis_type = FaceRecognizerSF::FR_COSINE)
-    private static native double match_0(long nativeObj, long _face_feature1_nativeObj, long _face_feature2_nativeObj, int dis_type);
-    private static native double match_1(long nativeObj, long _face_feature1_nativeObj, long _face_feature2_nativeObj);
+    // C++:  double cv::FaceRecognizerSF::match(Mat face_feature1, Mat face_feature2, int dis_type = FaceRecognizerSF::FR_COSINE)
+    private static native double match_0(long nativeObj, long face_feature1_nativeObj, long face_feature2_nativeObj, int dis_type);
+    private static native double match_1(long nativeObj, long face_feature1_nativeObj, long face_feature2_nativeObj);
 
     // C++: static Ptr_FaceRecognizerSF cv::FaceRecognizerSF::create(String model, String config, int backend_id = 0, int target_id = 0)
     private static native long create_0(String model, String config, int backend_id, int target_id);

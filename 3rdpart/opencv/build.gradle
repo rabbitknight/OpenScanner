@@ -58,7 +58,7 @@
 //
 // - Use find_package() in app/CMakeLists.txt:
 //
-//   find_package(OpenCV 4.5 REQUIRED java)
+//   find_package(OpenCV 4.6 REQUIRED java)
 //   ...
 //   target_link_libraries(native-lib ${OpenCV_LIBRARIES})
 //
@@ -91,8 +91,8 @@
 apply plugin: 'com.android.library'
 apply plugin: 'kotlin-android'
 
-def openCVersionName = "4.5.5"
-def openCVersionCode = ((4 * 100 + 5) * 100 + 5) * 10 + 0
+def openCVersionName = "4.6.0"
+def openCVersionCode = ((4 * 100 + 6) * 100 + 0) * 10 + 0
 
 println "OpenCV: " +openCVersionName + " " + project.buildscript.sourceFile
 

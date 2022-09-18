@@ -9,7 +9,9 @@ import org.opencv.objdetect.FaceDetectorYN;
 
 // C++: class FaceDetectorYN
 /**
- * DNN-based face detector, model download link: https://github.com/ShiqiYu/libfacedetection.train/tree/master/tasks/task1/onnx.
+ * DNN-based face detector
+ *
+ * model download link: https://github.com/opencv/opencv_zoo/tree/master/models/face_detection_yunet
  */
 public class FaceDetectorYN {
 
