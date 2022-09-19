@@ -11,6 +11,11 @@ class WeChatQRCode {
         private const val TAG = "WeChatQRCode"
         private var isAvailable = false
 
+        /**
+         * max detect size
+         */
+        private const val MAX_SIZE = 10
+
         init {
             try {
                 System.loadLibrary("wechat_engine")
@@ -83,13 +88,43 @@ class WeChatQRCode {
         }
         val res_points = IntArray(rects.size * 4)
         val texts = decode(peer, image, width, height, candidate_points, rects.size, res_points)
-        texts?.forEachIndexed { index, s ->
+        texts?.forEachIndexed { index, text ->
             val left = res_points[index * 4 + 0]
             val top = res_points[index * 4 + 1]
             val right = res_points[index * 4 + 2]
             val bottom = res_points[index * 4 + 3]
             outRects.add(Rect(left, top, right, bottom))
-            outTexts.add(s.toString())
+            outTexts.add(text)
+        }
+        return true
+    }
+
+    /**
+     * 检测并识别
+     */
+    fun detectAndDecode(
+        image: ByteArray,
+        width: Int,
+        height: Int,
+        outRects: MutableList<Rect>,
+        outTexts: MutableList<String>
+    ): Boolean {
+        outRects.clear()
+        outRects.clear()
+        if (peer == 0L) return false
+        val res_points = IntArray(MAX_SIZE * 4);
+        val res_texts = Array(MAX_SIZE) { "" }
+        val count = detectAndDecode(peer, image, width, height, res_points, res_texts)
+        if (count == -1) {
+            return false
+        }
+        for (index in 0 until count) {
+            val left = res_points[index * 4 + 0]
+            val top = res_points[index * 4 + 1]
+            val right = res_points[index * 4 + 2]
+            val bottom = res_points[index * 4 + 3]
+            outRects.add(Rect(left, top, right, bottom))
+            outTexts.add(res_texts[index])
         }
         return true
     }
@@ -159,6 +194,18 @@ class WeChatQRCode {
         candidate_size: Int,
         res_points: IntArray,
     ): Array<String>?
+
+    /**
+     * detect and decode the image
+     */
+    private external fun detectAndDecode(
+        peer: Long,
+        image: ByteArray,
+        width: Int,
+        height: Int,
+        res_points: IntArray,
+        res_texts: Array<String>
+    ): Int
 
     private external fun setScaleFactor(peer: Long, factor: Float): Boolean
 

@@ -93,7 +93,7 @@ class HWScanKitEngine : Engine {
             bitmap.height = image.height
             bitmap.copyPixelsFromBuffer(buffer)
         }.let {
-            Log.i(TAG, "${name()} decode: image prepare cost ${it}ms")
+            Log.i(TAG, "[${name()}] decode: image prepare cost ${it}ms")
         }
 
         // image decode
@@ -101,7 +101,7 @@ class HWScanKitEngine : Engine {
         measureTimeMillis {
             hmsScans = ScanUtil.decodeWithBitmap(context, bitmap, option)
         }.let {
-            Log.i(TAG, "${name()} decode: image decode cost ${it}ms")
+            Log.i(TAG, "[${name()}] decode: image decode cost ${it}ms")
         }
         // 结果转换
         val results = hmsScans?.map {

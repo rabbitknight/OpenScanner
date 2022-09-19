@@ -91,7 +91,7 @@ class ZBarEngine() : Engine {
             zbarImage.setSize(width, height)
             zbarImage.setData(buffer)
         }.let {
-            Log.i(TAG, "${name()} decode: image prepare cost ${it}ms")
+            Log.i(TAG, "[${name()}] decode: image prepare cost ${it}ms")
         }
 
         // 图像识别
@@ -99,7 +99,7 @@ class ZBarEngine() : Engine {
         measureTimeMillis {
             code = zbarScanner.scanImage(zbarImage)
         }.let {
-            Log.i(TAG, "${name()} decode: image decode cost ${it}ms")
+            Log.i(TAG, "[${name()}] decode: image decode cost ${it}ms")
         }
 
         if (code != 0) {

@@ -57,7 +57,7 @@ class MLKitEngine : Engine {
         measureTimeMillis {
             inputImage = image.toInputImage()
         }.let {
-            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] decode: image prepare cost ${it}ms")
         }
 
         // 图像识别
@@ -68,7 +68,7 @@ class MLKitEngine : Engine {
             // 结果获取 (使用DirectExecutor)
             barcodes = tasks.result
         }.let {
-            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] decode: image decode cost ${it}ms")
         }
 
         return barcodes.toImageResult(timestamp)

@@ -99,7 +99,7 @@ class ZXingEngine() : Engine {
                 BinaryBitmap(HybridBinarizer(source))
             }
         }.let {
-            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] decode: image prepare cost ${it}ms")
         }
 
         // image decode
@@ -111,7 +111,7 @@ class ZXingEngine() : Engine {
                 ImageResult(C.CODE_FAIL, timestamp, emptyList(), name())
             }
         }.let {
-            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] decode: image decode cost ${it}ms")
         }
         return result
     }

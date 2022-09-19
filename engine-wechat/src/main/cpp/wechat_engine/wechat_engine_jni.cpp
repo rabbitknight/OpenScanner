@@ -137,6 +137,49 @@ Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_decode(JNIEnv *env
 }
 
 extern "C"
+JNIEXPORT jint JNICALL
+Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_detectAndDecode(JNIEnv *env,
+                                                                              jobject thiz,
+                                                                              jlong peer,
+                                                                              jbyteArray image,
+                                                                              jint width,
+                                                                              jint height,
+                                                                              jintArray res_points,
+                                                                              jobjectArray res_texts) {
+    if (0 == peer) return -1;
+    auto *qrcode = (WeChatEngine *) peer;
+    auto *buffer = env->GetByteArrayElements(image, NULL);
+    // cvt bytebuffer to Mat
+    cv::Mat gray = cv::Mat(width, height, CV_8UC1, buffer);
+    auto _res_points = vector<cv::Mat>();
+
+    // detect and decode
+    auto _res_texts = qrcode->detectAndDecode(gray, _res_points);
+
+    env->ReleaseByteArrayElements(image, buffer, NULL);
+
+    int max_size = env->GetArrayLength(res_texts);
+    auto text_size = _res_texts.size();
+    // get max size
+    auto size = max_size > text_size ? text_size : max_size;
+    int *rects = new int[size];
+    for (int i = 0; i < size; ++i) {
+        // set text
+        auto text = _res_texts[i];
+        env->SetObjectArrayElement(res_texts, i, env->NewStringUTF(text.c_str()));
+        // set point
+        auto point = _res_points[i];
+        rects[i * 4 + 0] = (int) point.at<float>(0, 0); // left
+        rects[i * 4 + 1] = (int) point.at<float>(0, 1); // top
+        rects[i * 4 + 2] = (int) point.at<float>(2, 0); // right
+        rects[i * 4 + 3] = (int) point.at<float>(2, 1); // bottom
+    }
+    env->SetIntArrayRegion(res_points, 0, (jint) size, rects);
+
+    return (jint) size;
+}
+
+extern "C"
 JNIEXPORT jboolean JNICALL
 Java_net_rabbitknight_open_scanner_engine_wechat_WeChatQRCode_setScaleFactor(JNIEnv *env,
                                                                              jobject thiz,

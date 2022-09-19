@@ -66,24 +66,31 @@ class WeChatEngine : Engine {
                 image.planes[0].toByteArray(it, width, height)
             }
         }.let {
-            Log.i(C.TAG, "${name()} decode: image prepare cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] decode: image prepare cost ${it}ms")
         }
 
         val outRects = mutableListOf<Rect>()
         val outTexts = mutableListOf<String>()
-        val rois = mutableListOf<Rect>()
-        // 图像检测
-        measureTimeMillis {
-            qrcodeEngine.detect(buffer, width, height, rois)
-        }.let {
-            Log.i(C.TAG, "${name()} decode: image detect cost ${it}ms")
-        }
+//        val rois = mutableListOf<Rect>()
+//        // 图像检测
+//        measureTimeMillis {
+//            qrcodeEngine.detect(buffer, width, height, rois)
+//        }.let {
+//            Log.i(C.TAG, "${name()} decode: image detect cost ${it}ms")
+//        }
+//
+//        // 图像识别
+//        measureTimeMillis {
+//            qrcodeEngine.decode(buffer, width, height, rois, outRects, outTexts)
+//        }.let {
+//            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+//        }
 
-        // 图像识别
+        // 检测+识别
         measureTimeMillis {
-            qrcodeEngine.decode(buffer, width, height, rois, outRects, outTexts)
+            qrcodeEngine.detectAndDecode(buffer, width, height, outRects, outTexts)
         }.let {
-            Log.i(C.TAG, "${name()} decode: image decode cost ${it}ms")
+            Log.i(C.TAG, "[${name()}] detect & decode: image decode cost ${it}ms")
         }
 
         if (outTexts.isEmpty()) {
