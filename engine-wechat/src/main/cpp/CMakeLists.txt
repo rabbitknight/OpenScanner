@@ -45,7 +45,7 @@ add_library(
         IMPORTED
 )
 set_target_properties(opencv_java4 PROPERTIES IMPORTED_LOCATION
-        ${CMAKE_SOURCE_DIR}/../jniLibs/${ANDROID_ABI}/libopencv_java4.so)
+        ${CMAKE_SOURCE_DIR}/../../../../3rdpart/opencv/native/libs/${ANDROID_ABI}/libopencv_java4.so)
 
 
 # Searches for a specified prebuilt library and stores the path as a
