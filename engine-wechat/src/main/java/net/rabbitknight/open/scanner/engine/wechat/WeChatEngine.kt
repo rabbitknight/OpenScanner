@@ -4,6 +4,7 @@ import android.content.Context
 import android.util.Log
 import net.rabbitknight.open.scanner.core.C
 import net.rabbitknight.open.scanner.core.ScannerException
+import net.rabbitknight.open.scanner.core.engine.AssetsLoader
 import net.rabbitknight.open.scanner.core.engine.Engine
 import net.rabbitknight.open.scanner.core.format.BarcodeFormat
 import net.rabbitknight.open.scanner.core.image.ImageFormat
@@ -11,6 +12,11 @@ import net.rabbitknight.open.scanner.core.image.ImageWrapper
 import net.rabbitknight.open.scanner.core.result.BarcodeResult
 import net.rabbitknight.open.scanner.core.result.ImageResult
 import net.rabbitknight.open.scanner.core.result.Rect
+import net.rabbitknight.open.scanner.engine.wechat.C.ASSET_DETECT_CAFFE
+import net.rabbitknight.open.scanner.engine.wechat.C.ASSET_DETECT_PROTO
+import net.rabbitknight.open.scanner.engine.wechat.C.ASSET_SR_CAFFE
+import net.rabbitknight.open.scanner.engine.wechat.C.ASSET_SR_PROTO
+import java.io.File
 import kotlin.system.measureTimeMillis
 
 /**
@@ -26,7 +32,16 @@ class WeChatEngine : Engine {
     private lateinit var qrcodeEngine: WeChatQRCode
 
     override fun init(context: Context) {
-        AssetsLoader.load(context, "wechat_qrcode")
+        val assets = listOf(ASSET_DETECT_PROTO, ASSET_DETECT_CAFFE, ASSET_SR_PROTO, ASSET_SR_CAFFE)
+        val modelReady = assets.all {
+            val target = File(context.filesDir, it)
+            val load = AssetsLoader.loadOrExist(it, target, false)
+            if (!load) Log.w(C.TAG, "[${name()}] init: load $it to $target fail!")
+            load
+        }
+        if (!modelReady) {
+            Log.w(C.TAG, "[${name()}] init: AssetsLoader fail!")
+        }
         qrcodeEngine = WeChatQRCode()
     }
 

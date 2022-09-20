@@ -1,8 +1,8 @@
 package net.rabbitknight.open.scanner.engine.wechat
 
 import android.util.Log
+import net.rabbitknight.open.scanner.core.engine.AssetsLoader
 import net.rabbitknight.open.scanner.core.result.Rect
-import net.rabbitknight.open.scanner.engine.wechat.AssetsLoader.getFile
 
 class WeChatQRCode {
     private var peer: Long = 0
@@ -214,10 +214,13 @@ class WeChatQRCode {
     // endregion Native Bridge
 
     init {
-        val detector_prototxt_path = getFile(C.ASSET_DETECT_PROTO)?.absolutePath ?: ""
-        val detector_caffe_model_path = getFile(C.ASSET_DETECT_CAFFE)?.absolutePath ?: ""
-        val super_resolution_prototxt_path = getFile(C.ASSET_SR_PROTO)?.absolutePath ?: ""
-        val super_resolution_caffe_model_path = getFile(C.ASSET_SR_CAFFE)?.absolutePath ?: ""
+        val detector_prototxt_path = AssetsLoader.getFile(C.ASSET_DETECT_PROTO)?.absolutePath ?: ""
+        val detector_caffe_model_path =
+            AssetsLoader.getFile(C.ASSET_DETECT_CAFFE)?.absolutePath ?: ""
+        val super_resolution_prototxt_path =
+            AssetsLoader.getFile(C.ASSET_SR_PROTO)?.absolutePath ?: ""
+        val super_resolution_caffe_model_path =
+            AssetsLoader.getFile(C.ASSET_SR_CAFFE)?.absolutePath ?: ""
         peer = init(
             detector_prototxt_path,
             detector_caffe_model_path,
