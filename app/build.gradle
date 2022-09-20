@@ -22,6 +22,12 @@ android {
         }
     }
 
+    packagingOptions {
+        pickFirst "lib/*/libc++_shared.so"
+        pickFirst "lib/*/libopencv_java4.so"
+
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -49,6 +55,8 @@ dependencies {
     implementation project(":engine-hwscankit")
     implementation project(":engine-mlkit")
     implementation project(":engine-wechat")
+    implementation project(":engine-wechat-ncnn")
+
     implementation project(":engine-zbar")
     implementation project(":engine-zxing")
 

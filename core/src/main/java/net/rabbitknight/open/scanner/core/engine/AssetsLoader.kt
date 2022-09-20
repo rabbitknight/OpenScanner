@@ -1,6 +1,7 @@
 package net.rabbitknight.open.scanner.core.engine
 
 
+import android.os.FileUtils
 import net.rabbitknight.open.scanner.core.ContextProvider
 import java.io.File
 import java.io.FileOutputStream
@@ -26,8 +27,12 @@ object AssetsLoader {
             return true
         }
         // create new File
-        target.delete()
-        target.createNewFile()
+        if (!target.exists()) {
+            if (target.parentFile?.exists() != true) {
+                target.parentFile?.mkdir()
+            }
+            target.createNewFile()
+        }
         var success = true
         ins.use {
             val ous = FileOutputStream(target, false)

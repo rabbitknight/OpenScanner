@@ -1,7 +1,6 @@
 package net.rabbitknight.open.scanner
 
 import android.app.Application
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.util.Log
 import net.rabbitknight.open.scanner.core.C
@@ -11,6 +10,7 @@ import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.engine.hwscankit.HWScanKitEngine
 import net.rabbitknight.open.scanner.engine.mlkit.MLKitEngine
 import net.rabbitknight.open.scanner.engine.wechat.WeChatEngine
+import net.rabbitknight.open.scanner.engine.wechat_ncnn.WeChatNCNNEngine
 import net.rabbitknight.open.scanner.engine.zbar.ZBarEngine
 import net.rabbitknight.open.scanner.engine.zxing.ZXingEngine
 
@@ -28,6 +28,7 @@ class DemoApp : Application() {
         // Engine列表
         val engines = arrayOf(
             WeChatEngine::class.java,
+            WeChatNCNNEngine::class.java,
             HWScanKitEngine::class.java,
             ZBarEngine::class.java,
             ZXingEngine::class.java,
