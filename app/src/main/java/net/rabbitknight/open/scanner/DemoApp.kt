@@ -28,7 +28,7 @@ class DemoApp : Application() {
         // Engine列表
         val engines = arrayOf(
             WeChatEngine::class.java,
-            WeChatNCNNEngine::class.java,
+//            WeChatNCNNEngine::class.java,
             HWScanKitEngine::class.java,
             ZBarEngine::class.java,
             ZXingEngine::class.java,
