@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace 'net.rabbitknight.open.media.core'
-    compileSdk 33
+    compileSdk 31
 
     defaultConfig {
         minSdk 21
+        targetSdk 31
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         consumerProguardFiles "consumer-rules.pro"
@@ -30,6 +30,6 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation project(':scanner')// scankitSDK
+    implementation 'com.huawei.hms:scanplus:2.1.0.300'
 }

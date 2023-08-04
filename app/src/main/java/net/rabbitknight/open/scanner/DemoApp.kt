@@ -10,7 +10,6 @@ import net.rabbitknight.open.scanner.core.image.wrap
 import net.rabbitknight.open.scanner.engine.hwscankit.HWScanKitEngine
 import net.rabbitknight.open.scanner.engine.mlkit.MLKitEngine
 import net.rabbitknight.open.scanner.engine.wechat.WeChatEngine
-import net.rabbitknight.open.scanner.engine.wechat_ncnn.WeChatNCNNEngine
 import net.rabbitknight.open.scanner.engine.zbar.ZBarEngine
 import net.rabbitknight.open.scanner.engine.zxing.ZXingEngine
 

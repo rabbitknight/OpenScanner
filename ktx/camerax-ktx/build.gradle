@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace 'net.rabbitknight.open.media.core'
+    namespace 'net.rabbitknight.open.media.ext.camerax'
     compileSdk 33
 
     defaultConfig {
@@ -30,6 +30,12 @@ android {
 }
 
 dependencies {
-    implementation 'androidx.core:core-ktx:1.3.2'
-    implementation 'androidx.appcompat:appcompat:1.2.0'
+    implementation project(':data')
+    // CameraX core library using the camera2 implementation
+    def camerax_version = "1.2.3"
+    // The following line is optional, as the core library is included indirectly by camera-camera2
+    compileOnly "androidx.camera:camera-core:${camerax_version}"
+    compileOnly "androidx.camera:camera-camera2:${camerax_version}"
+    // If you want to additionally use the CameraX Lifecycle library
+    compileOnly "androidx.camera:camera-lifecycle:${camerax_version}"
 }
